@@ -1,0 +1,34 @@
+{
+  "name": "chartist-vuejs",
+  "version": "0.9.0",
+  "description": "Plugin chartist for vuejs",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "browserify example/src/main.js -t [ babelify --presets es2015 ] --outfile example/files/build.js",
+    "start": "node ./example/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yopadd/chartist-vuejs.git"
+  },
+  "keywords": [
+    "plugin",
+    "chartist",
+    "vuejs",
+    "vue"
+  ],
+  "author": "Yopadd",
+  "license": {
+      "type": "WTFPL",
+      "url": "https://github.com/gionkunz/chartist-js/blob/master/LICENSE"
+  },
+  "bugs": {
+    "url": "https://github.com/Yopadd/chartist-vuejs/issues"
+  },
+  "homepage": "https://github.com/Yopadd/chartist-vuejs#readme",
+  "devDependencies": {
+    "babelify": "^7.2.0",
+    "express": "^4.13.3",
+    "vue": "^1.0.11"
+  }
+}
