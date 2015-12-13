@@ -58,7 +58,6 @@ exports.install = function (Vue, custmOptions={}) {
             'ratio': 'draw',
             'options': 'draw',
             'data': 'draw',
-            'data': 'draw',
             'data.series': {
                 handler: 'draw',
                 deep: true
