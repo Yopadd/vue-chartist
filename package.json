@@ -1,6 +1,6 @@
 {
   "name": "chartist-vuejs",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Plugin chartist for vuejs",
   "main": "index.js",
   "scripts": {
@@ -19,8 +19,8 @@
   ],
   "author": "Yopadd",
   "license": {
-      "type": "WTFPL",
-      "url": "https://github.com/gionkunz/chartist-js/blob/master/LICENSE"
+    "type": "WTFPL",
+    "url": "https://github.com/gionkunz/chartist-js/blob/master/LICENSE"
   },
   "bugs": {
     "url": "https://github.com/Yopadd/chartist-vuejs/issues"
