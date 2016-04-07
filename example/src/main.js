@@ -1,6 +1,6 @@
 const Vue = require('vue')
 
-Vue.use(require('../../'), { messageNoData: "You have not enough data" })
+Vue.use(require('./plugin/index.js'), { messageNoData: "You have not enough data" })
 
 new Vue({
     el: '#app',

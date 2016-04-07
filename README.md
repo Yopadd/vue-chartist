@@ -80,9 +80,6 @@ Vue.use(require('chartist-vuejs'), {
 })
 ```
 
-## Run an example
-    git clone https://github.com/Yopadd/chartist-vuejs.git
-    cd chartist-vuejs
-    npm install
-    npm start
-Go to http://localhost:1337/
+## Example
+Go to https://chartist-vuejs-jneklbdxoq.now.sh/  
+Powered by 𝚫 now https://zeit.co/now

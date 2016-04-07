@@ -2,10 +2,10 @@
   "name": "chartist-vuejs",
   "version": "0.9.2",
   "description": "Plugin chartist for vuejs",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "push-example": "cp plugin.es6 example/src/plugin/",
-    "prepublish": "babel --presets es2015 plugin.es6 -o index.js"
+    "build": "babel --presets es2015 src/plugin/plugin.es6 -o src/plugin/index.js && browserify src/main.js -t [ babelify --presets es2015 ] --outfile files/build.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
