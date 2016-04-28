@@ -4,8 +4,9 @@
   "description": "Plugin chartist for vuejs",
   "main": "index.js",
   "scripts": {
-    "push-example": "cp plugin.es6 example/src/plugin/",
-    "prepublish": "babel --presets es2015 plugin.es6 -o index.js"
+    "build": "babel --presets es2015 ./src/index.js -o index.js",
+    "prepublish": "npm run build",
+    "start": "browserify -t babelify -e ./example/src/main.js -o ./example/public/build.js && node ./example/server.js"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,6 @@
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
     "express": "^4.13.3",
-    "vue": "^1.0.11"
+    "vue": "^1.0.21"
   }
 }
