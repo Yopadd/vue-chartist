@@ -1,5 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-const Vue = require('vue');
+'use strict';
+
+var Vue = require('vue');
 
 Vue.use(require('../../index.js'), { messageNoData: "You have not enough data" });
 
@@ -43,8 +45,7 @@ new Vue({
         },
         eventHandlers: [{
             event: 'draw',
-            fn(data) {
-                console.log('DRAW');
+            fn: function fn(data) {
                 if (data.type === 'line' || data.type === 'area') {
                     data.element.animate({
                         d: {
@@ -149,7 +150,6 @@ exports.install = function (Vue) {
         watch: {
             'ratio': 'draw',
             'options': 'draw',
-            'labels': 'draw',
             'data': {
                 handler: 'draw',
                 deep: true

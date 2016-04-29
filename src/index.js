@@ -55,7 +55,6 @@ exports.install = function (Vue, options={}) {
         watch: {
             'ratio': 'draw',
             'options': 'draw',
-            'labels': 'draw',
             'data': {
                 handler: 'draw',
                 deep: true
