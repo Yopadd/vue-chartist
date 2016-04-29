@@ -21,7 +21,7 @@
   "author": "Yopadd",
   "license": {
     "type": "WTFPL",
-    "url": "https://github.com/gionkunz/chartist-js/blob/master/LICENSE"
+    "url": "http://spdx.org/licenses/WTFPL.html#licenseText"
   },
   "bugs": {
     "url": "https://github.com/Yopadd/chartist-vuejs/issues"
@@ -34,5 +34,8 @@
     "browserify": "^13.0.0",
     "express": "^4.13.3",
     "vue": "^1.0.21"
+  },
+  "dependencies": {
+    "mocha": "^2.4.5"
   }
 }
