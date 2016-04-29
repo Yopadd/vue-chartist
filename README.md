@@ -1,13 +1,14 @@
-chartist-vuejs
+vue-chartist
 ==============
 
 Plugin [Vuejs](http://vuejs.org/) for [Chartist.js](https://gionkunz.github.io)
 
 ## Install
-    npm install chartist-vuejs
+    npm install vue-chartist
 ## Setup
+Ensure you have installed correctly [Chartist.js](https://gionkunz.github.io/chartist-js/getting-started.html)
 ```javascript
-Vue.use(require('chartist-vuejs'))
+Vue.use(require('vue-chartist'))
 ```
 ## Usage
 In your HTML, add `<chartist>` tag. This tag take following attributes :
@@ -75,7 +76,7 @@ new Vue({
 ### Customize chart with no data
 If chart datas are empty or not definite the plugin add `ct-nodata` class and witre a message on the element. Way, you can customize your element with CSS when you have no data to display. To choose your message use the options plugin :
 ```javascript
-Vue.use(require('chartist-vuejs'), {
+Vue.use(require('vue-chartist'), {
     messageNoData: "You have not enough data"
 })
 ```
