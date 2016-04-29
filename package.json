@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel --presets es2015 ./src/index.js -o index.js",
     "prepublish": "npm run build",
-    "start": "browserify -t babelify -e ./example/src/main.js -o ./example/public/build.js && node ./example/server.js"
+    "start": "browserify -t [ babelify --presets es2015 ] -e ./example/src/main.js -o ./example/public/build.js && node ./example/server.js"
   },
   "repository": {
     "type": "git",
