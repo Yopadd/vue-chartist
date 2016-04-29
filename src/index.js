@@ -13,7 +13,7 @@ exports.install = function (Vue, options={}) {
             data: { type: Object },
             options: { type: Object },
             type: { type: String, required: true, validator(val) { return val === 'Pie' || val === 'Line' || val === 'Bar' } },
-            eventHanders: { type: Array },
+            eventHandlers: { type: Array },
             responsiveOptions: { type: Object }
         },
         data() {
@@ -36,9 +36,9 @@ exports.install = function (Vue, options={}) {
                         this.message = '' //remove message no data
                         if (this.error.onError) this.error = { onError: false, message: '' } //clear error
                         const chart = new Chartist[this.type]('#'+this.idChart, this.data, this.options, this.responsiveOptions)
-                        if (this.eventHanders) {
-                            for (let el of this.eventHanders) {
-                                chart.on(el.event, el.fn)
+                        if (this.eventHandlers) {
+                            for (let item of this.eventHandlers) {
+                                chart.on(item.event, item.fn)
                             }
                         }
                     }

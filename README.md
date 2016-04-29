@@ -33,9 +33,9 @@ the options object, see defaultOptions on [API Documentation](https://gionkunz.g
 - **event-handlers** - `Array`  
 a special array to use `chart.on(event, function)`  
 ```javascript
-const eventHanders = [{
+const eventHandlers = [{
     event: 'draw',
-    fn: function () {
+    fn() {
         //animation
     }
 }, {

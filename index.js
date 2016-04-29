@@ -21,7 +21,7 @@ exports.install = function (Vue) {
                     return val === 'Pie' || val === 'Line' || val === 'Bar';
                 }
             },
-            eventHanders: { type: Array },
+            eventHandlers: { type: Array },
             responsiveOptions: { type: Object }
         },
         data: function data() {
@@ -45,16 +45,16 @@ exports.install = function (Vue) {
                             this.message = ''; //remove message no data
                             if (this.error.onError) this.error = { onError: false, message: '' }; //clear error
                             var chart = new Chartist[this.type]('#' + this.idChart, this.data, this.options, this.responsiveOptions);
-                            if (this.eventHanders) {
+                            if (this.eventHandlers) {
                                 var _iteratorNormalCompletion = true;
                                 var _didIteratorError = false;
                                 var _iteratorError = undefined;
 
                                 try {
-                                    for (var _iterator = this.eventHanders[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                                        var el = _step.value;
+                                    for (var _iterator = this.eventHandlers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                        var item = _step.value;
 
-                                        chart.on(el.event, el.fn);
+                                        chart.on(item.event, item.fn);
                                     }
                                 } catch (err) {
                                     _didIteratorError = true;
