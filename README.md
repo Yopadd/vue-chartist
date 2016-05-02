@@ -12,8 +12,6 @@ Vue.use(require('vue-chartist'))
 ```
 ## Usage
 In your HTML, add `<chartist>` tag. This tag take following attributes :
-- **id-chart** - `String` (required)  
-id attribute for the query selector of Chartist
 - **ratio** - `String`  
 class ratio of Chartist, see values on [Chartist web site](https://gionkunz.github.io/chartist-js/getting-started.html#as-simple-as-it-can-get)
 - **type** - `String` (required)  
@@ -49,7 +47,6 @@ the object for responsive options
 Example :
 ```html
 <chartist
-    id-chart="ct-chart"
     ratio="ct-major-second"
     type="Line"
     :data="chartData"
