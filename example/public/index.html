@@ -7,7 +7,7 @@
             body {
                 font-family: Arial, Helvetica, sans-serif;
             }
-            div[id|=ct-chart] {
+            div.chart {
                 display: inline-block;
                 width: 600px;
             }
@@ -34,7 +34,7 @@
         <h2>Charts reloaded thanks Vue.js</h2>
         <div id="line-bar">
             <chartist
-                id-chart="ct-chart-1"
+                class="chart"
                 ratio="ct-major-second"
                 :type="type"
                 :data="data"
@@ -57,7 +57,7 @@
         </div>
         <div id="pie">
             <chartist
-                id-chart="ct-chart-2"
+                class="chart"
                 ratio="ct-major-second"
                 type="Pie"
                 :data="pieData"
@@ -73,7 +73,7 @@
         <h2>Customize the emptys charts with the <i>ct-nodata</i> class and plugin options</h2>
         <div id="nodata">
             <chartist
-                id-chart="ct-chart-3"
+                class="chart"
                 ratio="ct-octave"
                 type="Bar" >
             </chartist>

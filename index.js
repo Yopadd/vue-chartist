@@ -7,13 +7,12 @@ exports.install = function (Vue) {
     options = Object.assign({}, defaultOptions, options);
 
     Vue.component('chartist', {
-        template: '<div :id="idChart" :class="[ratio, noData]">{{message}}</div>',
+        template: '<div v-el:chart :class="[ratio, noData]">{{message}}</div>',
         ready: function ready() {
             this.draw();
         },
 
         props: {
-            idChart: { type: String, required: true },
             ratio: { type: String },
             data: { type: Object },
             options: { type: Object },
@@ -37,14 +36,14 @@ exports.install = function (Vue) {
                 if (this.data) {
                     //data is empty
                     if (this.data.series.length < 1 || this.type !== 'Pie' && this.data.labels.length < 1) {
-                        new Chartist[this.type]('#' + this.idChart, this.data, this.options, this.responsiveOptions); //clear the potential old chart
+                        new Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions); //clear the potential old chart
                         this.setNoData();
                         //data is defined
                     } else {
                             this.noData = ''; //remove class ct-nodata
                             this.message = ''; //remove message no data
                             if (this.error.onError) this.error = { onError: false, message: '' }; //clear error
-                            var chart = new Chartist[this.type]('#' + this.idChart, this.data, this.options, this.responsiveOptions);
+                            var chart = new Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions);
                             if (this.eventHandlers) {
                                 var _iteratorNormalCompletion = true;
                                 var _didIteratorError = false;
