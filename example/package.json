@@ -1,6 +1,6 @@
 {
   "name": "vue-chartist-example",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Example for plugin vue-chartist",
   "main": "server.js",
   "scripts": {
@@ -33,6 +33,6 @@
     "browserify": "^13.0.0",
     "express": "^4.13.3",
     "vue": "^1.0.21",
-    "vue-chartist": "^1.0.0"
+    "vue-chartist": "^1.1.0"
   }
 }
