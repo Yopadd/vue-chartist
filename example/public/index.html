@@ -2,83 +2,148 @@
 <html>
     <head>
         <title>Chartist-vuejs example</title>
-        <link rel="stylesheet" href="/chartist/dist/chartist.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+        <link rel="stylesheet" href="chartist/dist/chartist.min.css">
+        <link rel="stylesheet" href="normalize.css/normalize.css">
+        <link rel="stylesheet" href="milligram/dist/milligram.min.css">
         <style>
-            body {
-                font-family: Arial, Helvetica, sans-serif;
+            html body {
+                position: absolute;
+                height: 100%;
+                width: 100%;
             }
-            div.chart {
-                display: inline-block;
-                width: 600px;
+            section, header {
+                height: 100%;
             }
-            div.customize {
+            textarea {
+                min-height: 300px;
+            }
+            h1 {
+                padding: 25px;
+                padding-bottom: 0px;
+            }
+            header {
                 display: flex;
-                flex-direction: column;
-                float: left;
-                width: 400px;
+                justify-content: center;
+                align-items: center;
+            }
+            .container-title {
+                padding-left: 50px;
             }
             .ct-nodata {
+                width: 500px;
                 border-radius: 10px;
                 text-align: center;
                 text-shadow: 2px 2px black;
-                line-height: 450px;
+                line-height: 300px;
                 background: gray;
                 color: white;
                 font-weight: bold;
                 font-size: 40px;
             }
+            #nav-fixed {
+                position: fixed;
+                bottom: 0px;
+                right: 0px;
+                z-index: 99;
+                background-color: white;
+                opacity: 0;
+            }
+            #nav-fixed.show {
+                opacity: 1;
+            }
         </style>
     </head>
     <body>
-        <h1>Plugin chartist-vuejs examples</h1>
-        <h2>Charts reloaded thanks Vue.js</h2>
-        <div id="line-bar">
-            <chartist
-                class="chart"
-                ratio="ct-major-second"
-                :type="type"
-                :data="data"
-                :options="options"
-                :event-handlers="eventHandlers" >
-            </chartist>
-            <div class="customize">
-                <label>Type : </label>
-                <Select v-model="type" >
-                    <option value="Line" selected>Line</option>
-                    <option value="Bar" >Bar</option>
-                </select>
-                <label>Labels : </label>
-                <input type="text" v-model="data.labels | json" lazy>
-                <label>Series : </label>
-                <input type="text" v-for="serie in data.series" v-model="serie.data | json" lazy>
-                <label>Options (e.g Chartist doc) : </label>
-                <textarea rows="15" v-model="options | json" lazy></textarea>
+        <header>
+            <div class="container">
+                <h1>Plugin <strong>vue-chartist</strong> examples</h1>
+                <div class="container-title">
+                    <blockquote>
+                        <p>Change values in inputs and see the result in real-time !</p>
+                        <nav>
+                            <ul>
+                                <li><a data-scroll href="#line-bar">Line and Bar chart</a></li>
+                                <li><a data-scroll href="#pie">Pie chart</a></li>
+                                <li><a data-scroll href="#nodata">Custom chart with no data</a></li>
+                            </ul>
+                        </nav>
+                    </blockquote>
+                </div>
             </div>
-        </div>
-        <div id="pie">
-            <chartist
-                class="chart"
-                ratio="ct-major-second"
-                type="Pie"
-                :data="pieData"
-                :options="pieOptions" >
-            </chartist>
-            <div class="customize">
-                <label>Serie : </label>
-                <input type="text" v-model="pieData.series | json" lazy>
-                <label>Options (e.g Chartist doc) : </label>
-                <textarea rows="15" v-model="pieOptions | json" lazy></textarea>
-            </div>
-        </div>
-        <h2>Customize the emptys charts with the <i>ct-nodata</i> class and plugin options</h2>
-        <div id="nodata">
-            <chartist
-                class="chart"
-                ratio="ct-octave"
-                type="Bar" >
-            </chartist>
-        </div>
-        <script src="/chartist/dist/chartist.min.js"></script>
-        <script src="/build.js"></script>
+        </header>
+        </section>
+            <hr id="line-bar">
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="column">
+                            <label>Type : </label>
+                            <Select v-model="type" >
+                                <option value="Line" selected>Line</option>
+                                <option value="Bar" >Bar</option>
+                            </select>
+                            <label>Labels : </label>
+                            <input type="text" v-model="data.labels | json" lazy>
+                            <label>Series : </label>
+                            <input type="text" v-for="serie in data.series" v-model="serie.data | json" lazy>
+                            <label>Options (e.g Chartist doc) : </label>
+                            <textarea v-model="options | json" lazy></textarea>
+                        </div>
+                        <div class="column">
+                            <chartist
+                                class="chart"
+                                ratio="ct-major-second"
+                                :type="type"
+                                :data="data"
+                                :options="options"
+                                :event-handlers="eventHandlers" >
+                            </chartist>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr id="pie">
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="column">
+                            <label>Serie : </label>
+                            <input type="text" v-model="pieData.series | json" lazy>
+                            <label>Options (e.g Chartist doc) : </label>
+                            <textarea v-model="pieOptions | json" lazy></textarea>
+                        </div>
+                        <div class="column">
+                            <chartist
+                                class="chart"
+                                ratio="ct-major-second"
+                                type="Pie"
+                                :data="pieData"
+                                :options="pieOptions" >
+                            </chartist>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr id="nodata">
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="column">
+                            <p>Customize the emptys charts with the <code>ct-nodata</code> class and plugin options</p>
+                        </div>
+                        <div class="column">
+                            <chartist
+                                class="chart"
+                                ratio="ct-octave"
+                                type="Bar" >
+                            </chartist>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        <script src="smooth-scroll/dist/js/smooth-scroll.min.js"></script>
+        <script src="chartist/dist/chartist.min.js"></script>
+        <script src="build.js"></script>
     </body>
 </html>

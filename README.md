@@ -79,5 +79,5 @@ Vue.use(require('vue-chartist'), {
 ```
 
 ## Example
-Go to https://vue-chartist-example-afttqeynkj.now.sh/  
+Go to https://vue-chartist-example-gksxpwwwrk.now.sh/  
 Powered by 𝚫 now https://zeit.co/now
