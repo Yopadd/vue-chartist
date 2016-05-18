@@ -17,7 +17,7 @@ exports.install = function (Vue, options={}) {
         },
         data() {
             return {
-                Chartist: typeof window.Chartist === 'undefined' ? require('chartist') : window.Chartist,
+                Chartist: require('chartist'),
                 error: { onError: false, message: '' },
                 noData: '',
                 message: ''
