@@ -1,4 +1,5 @@
 node_modules/
 npm-debug.log
-example/node_modules/
+example/public/build.js
 public/build.js
+index.js

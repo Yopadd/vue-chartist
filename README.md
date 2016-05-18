@@ -87,3 +87,10 @@ Vue.use(require('vue-chartist'), {
     messageNoData: "You have not enough data"
 })
 ```
+<<<<<<< HEAD
+=======
+
+## Example
+Go to https://vue-chartist-example-gksxpwwwrk.now.sh/  
+Powered by 𝚫 now https://zeit.co/now
+>>>>>>> embed-chartist

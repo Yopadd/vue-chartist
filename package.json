@@ -35,5 +35,8 @@
     "browserify": "^13.0.1",
     "http-server": "^0.9.0",
     "vue": "^1.0.24"
+  },
+  "dependencies": {
+    "chartist": "^0.9.7"
   }
 }

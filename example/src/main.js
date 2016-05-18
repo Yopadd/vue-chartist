@@ -1,4 +1,5 @@
 const Vue = require('vue')
+const Chartist = require('chartist')
 
 Vue.use(require('../../index.js'), { messageNoData: "You have not enough data" })
 
@@ -10,7 +11,7 @@ new Vue({
             series: [
                 {
                     name: 'series-1',
-                    data: [5, 2, 4, 2, 0]
+                    data: [0, 2, 4, 2, 0]
                 }, {
                     name: 'series-2',
                     data: [2, 3, 2.7, 1, 2.3]
