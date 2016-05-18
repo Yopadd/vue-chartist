@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+section {
+    display: flex;
+}
+
+.chart {
+    width: 500px;
+}
+
+div.customize {
+    display: flex;
+    flex-direction: column;
+    float: left;
+    width: 400px;
+}
+
+.ct-nodata {
+    border-radius: 10px;
+    text-align: center;
+    text-shadow: 2px 2px black;
+    line-height: 450px;
+    background: gray;
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
+}

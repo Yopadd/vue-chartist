@@ -1,6 +1,6 @@
 const Vue = require('vue')
 
-Vue.use(require('vue-chartist'), { messageNoData: "You have not enough data" })
+Vue.use(require('../../index.js'), { messageNoData: "You have not enough data" })
 
 new Vue({
     el: 'body',

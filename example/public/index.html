@@ -2,45 +2,14 @@
 <html>
     <head>
         <title>Chartist-vuejs example</title>
-        <link rel="stylesheet" href="/chartist/dist/chartist.min.css" />
-        <style>
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-            }
-            div.chart {
-                display: inline-block;
-                width: 600px;
-            }
-            div.customize {
-                display: flex;
-                flex-direction: column;
-                float: left;
-                width: 400px;
-            }
-            .ct-nodata {
-                border-radius: 10px;
-                text-align: center;
-                text-shadow: 2px 2px black;
-                line-height: 450px;
-                background: gray;
-                color: white;
-                font-weight: bold;
-                font-size: 40px;
-            }
-        </style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/0.9.7/chartist.min.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <h1>Plugin chartist-vuejs examples</h1>
         <h2>Charts reloaded thanks Vue.js</h2>
-        <div id="line-bar">
-            <chartist
-                class="chart"
-                ratio="ct-major-second"
-                :type="type"
-                :data="data"
-                :options="options"
-                :event-handlers="eventHandlers" >
-            </chartist>
+        <section>
+
             <div class="customize">
                 <label>Type : </label>
                 <Select v-model="type" >
@@ -54,8 +23,26 @@
                 <label>Options (e.g Chartist doc) : </label>
                 <textarea rows="15" v-model="options | json" lazy></textarea>
             </div>
-        </div>
-        <div id="pie">
+
+            <chartist
+                class="chart"
+                ratio="ct-major-second"
+                :type="type"
+                :data="data"
+                :options="options"
+                :event-handlers="eventHandlers" >
+            </chartist>
+
+        </section>
+        <section>
+
+            <div class="customize">
+                <label>Serie : </label>
+                <input type="text" v-model="pieData.series | json" lazy>
+                <label>Options (e.g Chartist doc) : </label>
+                <textarea rows="15" v-model="pieOptions | json" lazy></textarea>
+            </div>
+
             <chartist
                 class="chart"
                 ratio="ct-major-second"
@@ -63,22 +50,19 @@
                 :data="pieData"
                 :options="pieOptions" >
             </chartist>
-            <div class="customize">
-                <label>Serie : </label>
-                <input type="text" v-model="pieData.series | json" lazy>
-                <label>Options (e.g Chartist doc) : </label>
-                <textarea rows="15" v-model="pieOptions | json" lazy></textarea>
-            </div>
-        </div>
+
+        </section>
         <h2>Customize the emptys charts with the <i>ct-nodata</i> class and plugin options</h2>
-        <div id="nodata">
+        <section>
+
             <chartist
                 class="chart"
                 ratio="ct-octave"
                 type="Bar" >
             </chartist>
-        </div>
-        <script src="/chartist/dist/chartist.min.js"></script>
+
+        </section>
+        <script src="https://cdn.jsdelivr.net/chartist.js/0.9.7/chartist.min.js"></script>
         <script src="/build.js"></script>
     </body>
 </html>
