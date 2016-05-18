@@ -17,6 +17,7 @@ exports.install = function (Vue, options={}) {
         },
         data() {
             return {
+                Chartist: window.Chartist || options.Chartist,
                 error: { onError: false, message: '' },
                 noData: '',
                 message: ''
@@ -27,14 +28,14 @@ exports.install = function (Vue, options={}) {
                 if (this.data) {
                     //data is empty
                     if (this.data.series.length < 1 || (this.type !== 'Pie' && this.data.labels.length < 1)) {
-                        new Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions) //clear the potential old chart
+                        new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions) //clear the potential old chart
                         this.setNoData()
                     //data is defined
                     } else {
                         this.noData = '' //remove class ct-nodata
                         this.message = '' //remove message no data
                         if (this.error.onError) this.error = { onError: false, message: '' } //clear error
-                        const chart = new Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions)
+                        const chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions)
                         if (this.eventHandlers) {
                             for (let item of this.eventHandlers) {
                                 chart.on(item.event, item.fn)
