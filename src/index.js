@@ -17,7 +17,7 @@ exports.install = function (Vue, options={}) {
         },
         data() {
             return {
-                Chartist: window.Chartist || options.Chartist,
+                Chartist: require('chartist'),
                 error: { onError: false, message: '' },
                 noData: '',
                 message: ''
