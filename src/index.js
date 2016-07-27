@@ -3,7 +3,7 @@ exports.install = function (Vue, options={}) {
     options = Object.assign({}, defaultOptions, options)
 
     Vue.component('chartist', {
-        template:'<div v-el:chart :class="[ratio, noData]">{{message}}</div>',
+        template:'<div v-el:chart :class="[ratio, noData]" v-text="message"></div>',
         ready() {
             this.draw()
         },
