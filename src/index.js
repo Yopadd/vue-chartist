@@ -13,7 +13,7 @@ exports.install = function (Vue, options={}) {
             options: { type: Object },
             type: { type: String, required: true, validator(val) { return val === 'Pie' || val === 'Line' || val === 'Bar' } },
             eventHandlers: { type: Array },
-            responsiveOptions: { type: Object }
+            responsiveOptions: { type: Array }
         },
         data() {
             return {

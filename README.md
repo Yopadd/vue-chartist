@@ -54,7 +54,7 @@ const eventHandlers = [{
 }]
 ```
 
-- **responsive-options** - `Object`
+- **responsive-options** - `Array`
 the object for responsive options
 
 ## Example
