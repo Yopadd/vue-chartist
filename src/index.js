@@ -27,7 +27,10 @@ exports.install = function (Vue, options={}) {
             draw() {
                 if (this.data) {
                     //data is empty
-                    if (this.data.series.length < 1 || (this.type !== 'Pie' && this.data.labels.length < 1)) {
+                    if (
+                        this.data.series.length < 1
+                        || (this.type !== 'Pie' && (this.data.labels.length < 1 || this.data.series.every(serie => !serie.data.length)))
+                    ) {
                         new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions) //clear the potential old chart
                         this.setNoData()
                     //data is defined
