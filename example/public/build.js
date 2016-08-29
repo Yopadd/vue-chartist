@@ -71,7 +71,7 @@ exports.install = function (Vue) {
     options = Object.assign({}, defaultOptions, options);
 
     Vue.component('chartist', {
-        template: '<div v-el:chart :class="[ratio, noData]">{{message}}</div>',
+        template: '<div v-el:chart :class="[ratio, noData]" v-text="message"></div>',
         ready: function ready() {
             this.draw();
         },
@@ -85,7 +85,7 @@ exports.install = function (Vue) {
                 }
             },
             eventHandlers: { type: Array },
-            responsiveOptions: { type: Object }
+            responsiveOptions: { type: Array }
         },
         data: function data() {
             return {
@@ -175,7 +175,7 @@ exports.install = function (Vue) {
   }
 }(this, function () {
 
-/* Chartist.js 0.9.7
+/* Chartist.js 0.9.8
  * Copyright © 2016 Gion Kunz
  * Free to use under either the WTFPL license or the MIT license.
  * https://raw.githubusercontent.com/gionkunz/chartist-js/master/LICENSE-WTFPL
@@ -187,7 +187,7 @@ exports.install = function (Vue) {
  * @module Chartist.Core
  */
 var Chartist = {
-  version: '0.9.7'
+  version: '0.9.8'
 };
 
 (function (window, document, Chartist) {
@@ -910,6 +910,10 @@ var Chartist = {
       }
     }
 
+    // step must not be less than EPSILON to create values that can be represented as floating number.
+    var EPSILON = 2.221E-16;
+    bounds.step = Math.max(bounds.step, EPSILON);
+
     // Narrow min and max based on new step
     newMin = bounds.min;
     newMax = bounds.max;
@@ -923,11 +927,14 @@ var Chartist = {
     bounds.max = newMax;
     bounds.range = bounds.max - bounds.min;
 
-    bounds.values = [];
+    var values = [];
     for (i = bounds.min; i <= bounds.max; i += bounds.step) {
-      bounds.values.push(Chartist.roundWithPrecision(i));
+      var value = Chartist.roundWithPrecision(i);
+      if (value !== values[values.length - 1]) {
+        values.push(i);
+      }
     }
-
+    bounds.values = values;
     return bounds;
   };
 
@@ -1065,7 +1072,7 @@ var Chartist = {
     positionalData[axis.units.pos] = position + labelOffset[axis.units.pos];
     positionalData[axis.counterUnits.pos] = labelOffset[axis.counterUnits.pos];
     positionalData[axis.units.len] = length;
-    positionalData[axis.counterUnits.len] = axisOffset - 10;
+    positionalData[axis.counterUnits.len] = Math.max(0, axisOffset - 10);
 
     if(useForeignObject) {
       // We need to set width and height explicitly to px as span will not expand with width and height being
@@ -1125,7 +1132,7 @@ var Chartist = {
       mediaQueryListeners = [],
       i;
 
-    function updateCurrentOptions(preventChangedEvent) {
+    function updateCurrentOptions(mediaEvent) {
       var previousOptions = currentOptions;
       currentOptions = Chartist.extend({}, baseOptions);
 
@@ -1138,7 +1145,7 @@ var Chartist = {
         }
       }
 
-      if(eventEmitter && !preventChangedEvent) {
+      if(eventEmitter && mediaEvent) {
         eventEmitter.emit('optionsChanged', {
           previousOptions: previousOptions,
           currentOptions: currentOptions
@@ -1162,8 +1169,8 @@ var Chartist = {
         mediaQueryListeners.push(mql);
       }
     }
-    // Execute initially so we get the correct options
-    updateCurrentOptions(true);
+    // Execute initially without an event argument so we get the correct options
+    updateCurrentOptions();
 
     return {
       removeMediaQueryListeners: removeMediaQueryListeners,
@@ -1173,6 +1180,73 @@ var Chartist = {
     };
   };
 
+
+  /**
+   * Splits a list of coordinates and associated values into segments. Each returned segment contains a pathCoordinates
+   * valueData property describing the segment.
+   *
+   * With the default options, segments consist of contiguous sets of points that do not have an undefined value. Any
+   * points with undefined values are discarded.
+   *
+   * **Options**
+   * The following options are used to determine how segments are formed
+   * ```javascript
+   * var options = {
+   *   // If fillHoles is true, undefined values are simply discarded without creating a new segment. Assuming other options are default, this returns single segment.
+   *   fillHoles: false,
+   *   // If increasingX is true, the coordinates in all segments have strictly increasing x-values.
+   *   increasingX: false
+   * };
+   * ```
+   *
+   * @memberof Chartist.Core
+   * @param {Array} pathCoordinates List of point coordinates to be split in the form [x1, y1, x2, y2 ... xn, yn]
+   * @param {Array} values List of associated point values in the form [v1, v2 .. vn]
+   * @param {Object} options Options set by user
+   * @return {Array} List of segments, each containing a pathCoordinates and valueData property.
+   */
+  Chartist.splitIntoSegments = function(pathCoordinates, valueData, options) {
+    var defaultOptions = {
+      increasingX: false,
+      fillHoles: false
+    };
+
+    options = Chartist.extend({}, defaultOptions, options);
+
+    var segments = [];
+    var hole = true;
+
+    for(var i = 0; i < pathCoordinates.length; i += 2) {
+      // If this value is a "hole" we set the hole flag
+      if(valueData[i / 2].value === undefined) {
+        if(!options.fillHoles) {
+          hole = true;
+        }
+      } else {
+        if(options.increasingX && i >= 2 && pathCoordinates[i] <= pathCoordinates[i-2]) {
+          // X is not increasing, so we need to make sure we start a new segment
+          hole = true;
+        }
+
+
+        // If it's a valid value we need to check if we're coming out of a hole and create a new empty segment
+        if(hole) {
+          segments.push({
+            pathCoordinates: [],
+            valueData: []
+          });
+          // As we have a valid value now, we are not in a "hole" anymore
+          hole = false;
+        }
+
+        // Add to the segment pathCoordinates and valueData
+        segments[segments.length - 1].pathCoordinates.push(pathCoordinates[i], pathCoordinates[i + 1]);
+        segments[segments.length - 1].valueData.push(valueData[i / 2]);
+      }
+    }
+
+    return segments;
+  };
 }(window, document, Chartist));
 ;/**
  * Chartist path interpolation functions.
@@ -1338,43 +1412,12 @@ var Chartist = {
     var t = Math.min(1, Math.max(0, options.tension)),
       c = 1 - t;
 
-    // This function will help us to split pathCoordinates and valueData into segments that also contain pathCoordinates
-    // and valueData. This way the existing functions can be reused and the segment paths can be joined afterwards.
-    // This functionality is necessary to treat "holes" in the line charts
-    function splitIntoSegments(pathCoordinates, valueData) {
-      var segments = [];
-      var hole = true;
-
-      for(var i = 0; i < pathCoordinates.length; i += 2) {
-        // If this value is a "hole" we set the hole flag
-        if(valueData[i / 2].value === undefined) {
-          if(!options.fillHoles) {
-            hole = true;
-          }
-        } else {
-          // If it's a valid value we need to check if we're coming out of a hole and create a new empty segment
-          if(hole) {
-            segments.push({
-              pathCoordinates: [],
-              valueData: []
-            });
-            // As we have a valid value now, we are not in a "hole" anymore
-            hole = false;
-          }
-
-          // Add to the segment pathCoordinates and valueData
-          segments[segments.length - 1].pathCoordinates.push(pathCoordinates[i], pathCoordinates[i + 1]);
-          segments[segments.length - 1].valueData.push(valueData[i / 2]);
-        }
-      }
-
-      return segments;
-    }
-
     return function cardinal(pathCoordinates, valueData) {
       // First we try to split the coordinates into segments
       // This is necessary to treat "holes" in line charts
-      var segments = splitIntoSegments(pathCoordinates, valueData);
+      var segments = Chartist.splitIntoSegments(pathCoordinates, valueData, {
+        fillHoles: options.fillHoles
+      });
 
       if(!segments.length) {
         // If there were no segments return 'Chartist.Interpolation.none'
@@ -1436,6 +1479,137 @@ var Chartist = {
             p[2].y,
             false,
             valueData[(i + 2) / 2]
+          );
+        }
+
+        return path;
+      }
+    };
+  };
+
+  /**
+   * Monotone Cubic spline interpolation produces a smooth curve which preserves monotonicity. Unlike cardinal splines, the curve will not extend beyond the range of y-values of the original data points.
+   *
+   * Monotone Cubic splines can only be created if there are more than two data points. If this is not the case this smoothing will fallback to `Chartist.Smoothing.none`.
+   *
+   * The x-values of subsequent points must be increasing to fit a Monotone Cubic spline. If this condition is not met for a pair of adjacent points, then there will be a break in the curve between those data points.
+   *
+   * All smoothing functions within Chartist are factory functions that accept an options parameter.
+   *
+   * @example
+   * var chart = new Chartist.Line('.ct-chart', {
+   *   labels: [1, 2, 3, 4, 5],
+   *   series: [[1, 2, 8, 1, 7]]
+   * }, {
+   *   lineSmooth: Chartist.Interpolation.monotoneCubic({
+   *     fillHoles: false
+   *   })
+   * });
+   *
+   * @memberof Chartist.Interpolation
+   * @param {Object} options The options of the monotoneCubic factory function.
+   * @return {Function}
+   */
+  Chartist.Interpolation.monotoneCubic = function(options) {
+    var defaultOptions = {
+      fillHoles: false
+    };
+
+    options = Chartist.extend({}, defaultOptions, options);
+
+    return function monotoneCubic(pathCoordinates, valueData) {
+      // First we try to split the coordinates into segments
+      // This is necessary to treat "holes" in line charts
+      var segments = Chartist.splitIntoSegments(pathCoordinates, valueData, {
+        fillHoles: options.fillHoles,
+        increasingX: true
+      });
+
+      if(!segments.length) {
+        // If there were no segments return 'Chartist.Interpolation.none'
+        return Chartist.Interpolation.none()([]);
+      } else if(segments.length > 1) {
+        // If the split resulted in more that one segment we need to interpolate each segment individually and join them
+        // afterwards together into a single path.
+          var paths = [];
+        // For each segment we will recurse the monotoneCubic fn function
+        segments.forEach(function(segment) {
+          paths.push(monotoneCubic(segment.pathCoordinates, segment.valueData));
+        });
+        // Join the segment path data into a single path and return
+        return Chartist.Svg.Path.join(paths);
+      } else {
+        // If there was only one segment we can proceed regularly by using pathCoordinates and valueData from the first
+        // segment
+        pathCoordinates = segments[0].pathCoordinates;
+        valueData = segments[0].valueData;
+
+        // If less than three points we need to fallback to no smoothing
+        if(pathCoordinates.length <= 4) {
+          return Chartist.Interpolation.none()(pathCoordinates, valueData);
+        }
+
+        var xs = [],
+          ys = [],
+          i,
+          n = pathCoordinates.length / 2,
+          ms = [],
+          ds = [], dys = [], dxs = [],
+          path;
+
+        // Populate x and y coordinates into separate arrays, for readability
+
+        for(i = 0; i < n; i++) {
+          xs[i] = pathCoordinates[i * 2];
+          ys[i] = pathCoordinates[i * 2 + 1];
+        }
+
+        // Calculate deltas and derivative
+
+        for(i = 0; i < n - 1; i++) {
+          dys[i] = ys[i + 1] - ys[i];
+          dxs[i] = xs[i + 1] - xs[i];
+          ds[i] = dys[i] / dxs[i];
+        }
+
+        // Determine desired slope (m) at each point using Fritsch-Carlson method
+        // See: http://math.stackexchange.com/questions/45218/implementation-of-monotone-cubic-interpolation
+
+        ms[0] = ds[0];
+        ms[n - 1] = ds[n - 2];
+
+        for(i = 1; i < n - 1; i++) {
+          if(ds[i] === 0 || ds[i - 1] === 0 || (ds[i - 1] > 0) !== (ds[i] > 0)) {
+            ms[i] = 0;
+          } else {
+            ms[i] = 3 * (dxs[i - 1] + dxs[i]) / (
+              (2 * dxs[i] + dxs[i - 1]) / ds[i - 1] +
+              (dxs[i] + 2 * dxs[i - 1]) / ds[i]);
+
+            if(!isFinite(ms[i])) {
+              ms[i] = 0;
+            }
+          }
+        }
+
+        // Now build a path from the slopes
+
+        path = new Chartist.Svg.Path().move(xs[0], ys[0], false, valueData[0]);
+
+        for(i = 0; i < n - 1; i++) {
+          path.curve(
+            // First control point
+            xs[i] + dxs[i] / 3,
+            ys[i] + ms[i] * dxs[i] / 3,
+            // Second control point
+            xs[i + 1] - dxs[i] / 3,
+            ys[i + 1] - ms[i + 1] * dxs[i] / 3,
+            // End point
+            xs[i + 1],
+            ys[i + 1],
+
+            false,
+            valueData[i + 1]
           );
         }
 
@@ -3314,7 +3488,7 @@ var Chartist = {
       };
 
       var smoothing = typeof seriesOptions.lineSmooth === 'function' ?
-        seriesOptions.lineSmooth : (seriesOptions.lineSmooth ? Chartist.Interpolation.cardinal() : Chartist.Interpolation.none());
+        seriesOptions.lineSmooth : (seriesOptions.lineSmooth ? Chartist.Interpolation.monotoneCubic() : Chartist.Interpolation.none());
       // Interpolating path where pathData will be used to annotate each path element so we can trace back the original
       // index, value and meta data
       var path = smoothing(pathCoordinates, pathData);
@@ -4319,8 +4493,74 @@ return Chartist;
 
 },{}],4:[function(require,module,exports){
 // shim for using process in browser
-
 var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+    try {
+        cachedSetTimeout = setTimeout;
+    } catch (e) {
+        cachedSetTimeout = function () {
+            throw new Error('setTimeout is not defined');
+        }
+    }
+    try {
+        cachedClearTimeout = clearTimeout;
+    } catch (e) {
+        cachedClearTimeout = function () {
+            throw new Error('clearTimeout is not defined');
+        }
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
 var queue = [];
 var draining = false;
 var currentQueue;
@@ -4345,7 +4585,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
+    var timeout = runTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -4362,7 +4602,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
+    runClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -4374,7 +4614,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
+        runTimeout(drainQueue);
     }
 };
 
@@ -4416,7 +4656,7 @@ process.umask = function() { return 0; };
 },{}],5:[function(require,module,exports){
 (function (process,global){
 /*!
- * Vue.js v1.0.24
+ * Vue.js v1.0.26
  * (c) 2016 Evan You
  * Released under the MIT License.
  */
@@ -4815,10 +5055,15 @@ var devtools = inBrowser && window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
 
 // UA sniffing for working around browser-specific quirks
 var UA = inBrowser && window.navigator.userAgent.toLowerCase();
+var isIE = UA && UA.indexOf('trident') > 0;
 var isIE9 = UA && UA.indexOf('msie 9.0') > 0;
 var isAndroid = UA && UA.indexOf('android') > 0;
 var isIos = UA && /(iphone|ipad|ipod|ios)/i.test(UA);
-var isWechat = UA && UA.indexOf('micromessenger') > 0;
+var iosVersionMatch = isIos && UA.match(/os ([\d_]+)/);
+var iosVersion = iosVersionMatch && iosVersionMatch[1].split('_');
+
+// detecting iOS UIWebView by indexedDB
+var hasMutationObserverBug = iosVersion && Number(iosVersion[0]) >= 9 && Number(iosVersion[1]) >= 3 && !window.indexedDB;
 
 var transitionProp = undefined;
 var transitionEndEvent = undefined;
@@ -4859,7 +5104,7 @@ var nextTick = (function () {
   }
 
   /* istanbul ignore if */
-  if (typeof MutationObserver !== 'undefined' && !(isWechat && isIos)) {
+  if (typeof MutationObserver !== 'undefined' && !hasMutationObserverBug) {
     var counter = 1;
     var observer = new MutationObserver(nextTickHandler);
     var textNode = document.createTextNode(counter);
@@ -4931,12 +5176,12 @@ var p = Cache.prototype;
 
 p.put = function (key, value) {
   var removed;
-  if (this.size === this.limit) {
-    removed = this.shift();
-  }
 
   var entry = this.get(key, true);
   if (!entry) {
+    if (this.size === this.limit) {
+      removed = this.shift();
+    }
     entry = {
       key: key
     };
@@ -5181,7 +5426,7 @@ function compileRegex() {
   var unsafeOpen = escapeRegex(config.unsafeDelimiters[0]);
   var unsafeClose = escapeRegex(config.unsafeDelimiters[1]);
   tagRE = new RegExp(unsafeOpen + '((?:.|\\n)+?)' + unsafeClose + '|' + open + '((?:.|\\n)+?)' + close, 'g');
-  htmlRE = new RegExp('^' + unsafeOpen + '.*' + unsafeClose + '$');
+  htmlRE = new RegExp('^' + unsafeOpen + '((?:.|\\n)+?)' + unsafeClose + '$');
   // reset cache
   cache = new Cache(1000);
 }
@@ -5968,7 +6213,8 @@ if (process.env.NODE_ENV !== 'production') {
       return (/HTMLUnknownElement/.test(el.toString()) &&
         // Chrome returns unknown for several HTML5 elements.
         // https://code.google.com/p/chromium/issues/detail?id=540526
-        !/^(data|time|rtc|rb)$/.test(tag)
+        // Firefox returns unknown for some "Interactive elements."
+        !/^(data|time|rtc|rb|details|dialog|summary)$/.test(tag)
       );
     }
   };
@@ -6304,7 +6550,9 @@ function mergeOptions(parent, child, vm) {
   }
   if (child.mixins) {
     for (var i = 0, l = child.mixins.length; i < l; i++) {
-      parent = mergeOptions(parent, child.mixins[i], vm);
+      var mixin = child.mixins[i];
+      var mixinOptions = mixin.prototype instanceof Vue ? mixin.options : mixin;
+      parent = mergeOptions(parent, mixinOptions, vm);
     }
   }
   for (key in parent) {
@@ -6732,10 +6980,13 @@ var util = Object.freeze({
 	hasProto: hasProto,
 	inBrowser: inBrowser,
 	devtools: devtools,
+	isIE: isIE,
 	isIE9: isIE9,
 	isAndroid: isAndroid,
 	isIos: isIos,
-	isWechat: isWechat,
+	iosVersionMatch: iosVersionMatch,
+	iosVersion: iosVersion,
+	hasMutationObserverBug: hasMutationObserverBug,
 	get transitionProp () { return transitionProp; },
 	get transitionEndEvent () { return transitionEndEvent; },
 	get animationProp () { return animationProp; },
@@ -7223,7 +7474,9 @@ var saveRE = /[\{,]\s*[\w\$_]+\s*:|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\
 var restoreRE = /"(\d+)"/g;
 var pathTestRE = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?'\]|\[".*?"\]|\[\d+\]|\[[A-Za-z_$][\w$]*\])*$/;
 var identRE = /[^\w$\.](?:[A-Za-z_$][\w$]*)/g;
-var booleanLiteralRE = /^(?:true|false)$/;
+var literalValueRE$1 = /^(?:true|false|null|undefined|Infinity|NaN)$/;
+
+function noop() {}
 
 /**
  * Save / Rewrite / Restore
@@ -7305,7 +7558,7 @@ function compileGetter(exp) {
   // save strings and object literal keys
   var body = exp.replace(saveRE, save).replace(wsRE, '');
   // rewrite all paths
-  // pad 1 space here becaue the regex matches 1 extra char
+  // pad 1 space here because the regex matches 1 extra char
   body = (' ' + body).replace(identRE, rewrite).replace(restoreRE, restore);
   return makeGetterFn(body);
 }
@@ -7326,7 +7579,15 @@ function makeGetterFn(body) {
     return new Function('scope', 'return ' + body + ';');
     /* eslint-enable no-new-func */
   } catch (e) {
-    process.env.NODE_ENV !== 'production' && warn('Invalid expression. ' + 'Generated function body: ' + body);
+    if (process.env.NODE_ENV !== 'production') {
+      /* istanbul ignore if */
+      if (e.toString().match(/unsafe-eval|CSP/)) {
+        warn('It seems you are using the default build of Vue.js in an environment ' + 'with Content Security Policy that prohibits unsafe-eval. ' + 'Use the CSP-compliant build instead: ' + 'http://vuejs.org/guide/installation.html#CSP-compliant-build');
+      } else {
+        warn('Invalid expression. ' + 'Generated function body: ' + body);
+      }
+    }
+    return noop;
   }
 }
 
@@ -7388,8 +7649,8 @@ function parseExpression(exp, needSet) {
 
 function isSimplePath(exp) {
   return pathTestRE.test(exp) &&
-  // don't treat true/false as paths
-  !booleanLiteralRE.test(exp) &&
+  // don't treat literal values as paths
+  !literalValueRE$1.test(exp) &&
   // Math constants e.g. Math.PI, Math.E etc.
   exp.slice(0, 5) !== 'Math.';
 }
@@ -7805,7 +8066,7 @@ function traverse(val, seen) {
   }
   var isA = isArray(val);
   var isO = isObject(val);
-  if (isA || isO) {
+  if ((isA || isO) && Object.isExtensible(val)) {
     if (val.__ob__) {
       var depId = val.__ob__.dep.id;
       if (seen.has(depId)) {
@@ -7868,6 +8129,7 @@ function isRealTemplate(node) {
 
 var tagRE$1 = /<([\w:-]+)/;
 var entityRE = /&#?\w+?;/;
+var commentRE = /<!--/;
 
 /**
  * Convert a string template to a DocumentFragment.
@@ -7890,8 +8152,9 @@ function stringToFragment(templateString, raw) {
   var frag = document.createDocumentFragment();
   var tagMatch = templateString.match(tagRE$1);
   var entityMatch = entityRE.test(templateString);
+  var commentMatch = commentRE.test(templateString);
 
-  if (!tagMatch && !entityMatch) {
+  if (!tagMatch && !entityMatch && !commentMatch) {
     // text only, return a single text node.
     frag.appendChild(document.createTextNode(templateString));
   } else {
@@ -8858,7 +9121,7 @@ var vFor = {
    * the filters. This is passed to and called by the watcher.
    *
    * It is necessary for this to be called during the
-   * wathcer's dependency collection phase because we want
+   * watcher's dependency collection phase because we want
    * the v-for to update when the source Object is mutated.
    */
 
@@ -9201,7 +9464,10 @@ var text$2 = {
   },
 
   update: function update(value) {
-    this.el.value = _toString(value);
+    // #3029 only update when the value changes. This prevent
+    // browsers from overwriting values like selectionStart
+    value = _toString(value);
+    if (value !== this.el.value) this.el.value = value;
   },
 
   unbind: function unbind() {
@@ -9250,6 +9516,8 @@ var radio = {
 var select = {
 
   bind: function bind() {
+    var _this = this;
+
     var self = this;
     var el = this.el;
 
@@ -9281,7 +9549,12 @@ var select = {
     // selectedIndex with value -1 to 0 when the element
     // is appended to a new parent, therefore we have to
     // force a DOM update whenever that happens...
-    this.vm.$on('hook:attached', this.forceUpdate);
+    this.vm.$on('hook:attached', function () {
+      nextTick(_this.forceUpdate);
+    });
+    if (!inDoc(el)) {
+      nextTick(this.forceUpdate);
+    }
   },
 
   update: function update(value) {
@@ -10551,7 +10824,7 @@ function processPropValue(vm, prop, rawValue, fn) {
   if (value === undefined) {
     value = getPropDefaultValue(vm, prop);
   }
-  value = coerceProp(prop, value);
+  value = coerceProp(prop, value, vm);
   var coerced = value !== rawValue;
   if (!assertProp(prop, value, vm)) {
     value = undefined;
@@ -10670,13 +10943,17 @@ function assertProp(prop, value, vm) {
  * @return {*}
  */
 
-function coerceProp(prop, value) {
+function coerceProp(prop, value, vm) {
   var coerce = prop.options.coerce;
   if (!coerce) {
     return value;
   }
-  // coerce is a function
-  return coerce(value);
+  if (typeof coerce === 'function') {
+    return coerce(value);
+  } else {
+    process.env.NODE_ENV !== 'production' && warn('Invalid coerce for prop "' + prop.name + '": expected function, got ' + typeof coerce + '.', vm);
+    return value;
+  }
 }
 
 /**
@@ -11208,10 +11485,9 @@ var transition$1 = {
     // resolve on owner vm
     var hooks = resolveAsset(this.vm.$options, 'transitions', id);
     id = id || 'v';
+    oldId = oldId || 'v';
     el.__v_trans = new Transition(el, id, hooks, this.vm);
-    if (oldId) {
-      removeClass(el, oldId + '-transition');
-    }
+    removeClass(el, oldId + '-transition');
     addClass(el, id + '-transition');
   }
 };
@@ -11636,7 +11912,7 @@ function makeTextNodeLinkFn(tokens, frag) {
           if (token.html) {
             replace(node, parseTemplate(value, true));
           } else {
-            node.data = value;
+            node.data = _toString(value);
           }
         } else {
           vm._bindDir(token.descriptor, node, host, scope);
@@ -12620,7 +12896,7 @@ function eventsMixin (Vue) {
   };
 }
 
-function noop() {}
+function noop$1() {}
 
 /**
  * A directive links a DOM element with a piece of data,
@@ -12719,7 +12995,7 @@ Directive.prototype._bind = function () {
         }
       };
     } else {
-      this._update = noop;
+      this._update = noop$1;
     }
     var preProcess = this._preProcess ? bind(this._preProcess, this) : null;
     var postProcess = this._postProcess ? bind(this._postProcess, this) : null;
@@ -14157,7 +14433,7 @@ var filters = {
 
   json: {
     read: function read(value, indent) {
-      return typeof value === 'string' ? value : JSON.stringify(value, null, Number(indent) || 2);
+      return typeof value === 'string' ? value : JSON.stringify(value, null, arguments.length > 1 ? indent : 2);
     },
     write: function write(value) {
       try {
@@ -14230,7 +14506,13 @@ var filters = {
 
   pluralize: function pluralize(value) {
     var args = toArray(arguments, 1);
-    return args.length > 1 ? args[value % 10 - 1] || args[args.length - 1] : args[0] + (value === 1 ? '' : 's');
+    var length = args.length;
+    if (length > 1) {
+      var index = value % 10 - 1;
+      return index in args ? args[index] : args[length - 1];
+    } else {
+      return args[0] + (value === 1 ? '' : 's');
+    }
   },
 
   /**
@@ -14415,7 +14697,9 @@ function installGlobalAPI (Vue) {
           }
         }
         if (type === 'component' && isPlainObject(definition)) {
-          definition.name = id;
+          if (!definition.name) {
+            definition.name = id;
+          }
           definition = Vue.extend(definition);
         }
         this.options[type + 's'][id] = definition;
@@ -14430,7 +14714,7 @@ function installGlobalAPI (Vue) {
 
 installGlobalAPI(Vue);
 
-Vue.version = '1.0.24';
+Vue.version = '1.0.26';
 
 // devtools global hook
 /* istanbul ignore next */
