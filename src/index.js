@@ -18,6 +18,7 @@ exports.install = function (Vue, options={}) {
         data() {
             return {
                 Chartist: require('chartist'),
+                chart: null,
                 error: { onError: false, message: '' },
                 noData: '',
                 message: ''
@@ -28,23 +29,28 @@ exports.install = function (Vue, options={}) {
                 if (this.data) {
                     //data is empty
                     if (this.data.series.length < 1 || (this.type !== 'Pie' && this.data.labels.length < 1)) {
-                        new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions) //clear the potential old chart
+                        this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions) //clear the potential old chart
                         this.setNoData()
                     //data is defined
                     } else {
                         this.noData = '' //remove class ct-nodata
                         this.message = '' //remove message no data
                         if (this.error.onError) this.error = { onError: false, message: '' } //clear error
-                        const chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions)
+                        this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions)
                         if (this.eventHandlers) {
                             for (let item of this.eventHandlers) {
-                                chart.on(item.event, item.fn)
+                                this.chart.on(item.event, item.fn)
                             }
                         }
                     }
                 } else {
                     this.setNoData()
                 }
+            },
+            redraw() {
+                if (this.data.series.length < 1 || (this.type !== 'Pie' && this.data.labels.length < 1))
+                    this.setNoData()
+                this.chart.update(this.data, this.options)
             },
             setNoData() {
                 this.error = { onError: true, message: options.messageNoData }
@@ -53,13 +59,13 @@ exports.install = function (Vue, options={}) {
             }
         },
         watch: {
-            'ratio': 'draw',
-            'options': 'draw',
+            'ratio': 'redraw',
+            'options': 'redraw',
             'data': {
-                handler: 'draw',
+                handler: 'redraw',
                 deep: true
             },
-            'type': 'draw'
+            'type': 'redraw'
         }
     })
 }

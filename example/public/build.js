@@ -8,18 +8,20 @@ new Vue({
     el: 'body',
     data: {
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-            series: [{
-                name: 'series-1',
-                data: [0, 2, 4, 2, 0]
-            }, {
-                name: 'series-2',
-                data: [2, 3, 2.7, 1, 2.3]
-            }, {
-                name: 'series-3',
-                data: [4, 3.8, 3, 5, 4.1]
-            }]
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
         },
+        // series: [
+        //     {
+        //         name: 'series-1',
+        //         data: [0, 2, 4, 2, 0]
+        //     }, {
+        //         name: 'series-2',
+        //         data: [2, 3, 2.7, 1, 2.3]
+        //     }, {
+        //         name: 'series-3',
+        //         data: [4, 3.8, 3, 5, 4.1]
+        //     }
+        // ]
         type: 'Line',
         pieData: {
             series: [5, 6, 3, 0, 2, 4]
@@ -90,6 +92,7 @@ exports.install = function (Vue) {
         data: function data() {
             return {
                 Chartist: require('chartist'),
+                chart: null,
                 error: { onError: false, message: '' },
                 noData: '',
                 message: ''
@@ -101,14 +104,14 @@ exports.install = function (Vue) {
                 if (this.data) {
                     //data is empty
                     if (this.data.series.length < 1 || this.type !== 'Pie' && this.data.labels.length < 1) {
-                        new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions); //clear the potential old chart
+                        this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions); //clear the potential old chart
                         this.setNoData();
                         //data is defined
                     } else {
                             this.noData = ''; //remove class ct-nodata
                             this.message = ''; //remove message no data
                             if (this.error.onError) this.error = { onError: false, message: '' }; //clear error
-                            var chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions);
+                            this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions);
                             if (this.eventHandlers) {
                                 var _iteratorNormalCompletion = true;
                                 var _didIteratorError = false;
@@ -118,7 +121,7 @@ exports.install = function (Vue) {
                                     for (var _iterator = this.eventHandlers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                                         var item = _step.value;
 
-                                        chart.on(item.event, item.fn);
+                                        this.chart.on(item.event, item.fn);
                                     }
                                 } catch (err) {
                                     _didIteratorError = true;
@@ -140,6 +143,10 @@ exports.install = function (Vue) {
                     this.setNoData();
                 }
             },
+            redraw: function redraw() {
+                if (this.data.series.length < 1 || this.type !== 'Pie' && this.data.labels.length < 1) this.setNoData();
+                this.chart.update(this.data, this.options);
+            },
             setNoData: function setNoData() {
                 this.error = { onError: true, message: options.messageNoData };
                 this.noData = 'ct-nodata';
@@ -147,13 +154,13 @@ exports.install = function (Vue) {
             }
         },
         watch: {
-            'ratio': 'draw',
-            'options': 'draw',
+            'ratio': 'redraw',
+            'options': 'redraw',
             'data': {
-                handler: 'draw',
+                handler: 'redraw',
                 deep: true
             },
-            'type': 'draw'
+            'type': 'redraw'
         }
     });
 };
