@@ -25,32 +25,41 @@ exports.install = function (Vue, options={}) {
             }
         },
         methods: {
+            clear() {
+                this.noData = '' //remove class ct-nodata
+                this.message = '' //remove message no data
+                if (this.error.onError) this.error = { onError: false, message: '' } //clear error
+            },
             draw() {
-                if (this.data) {
-                    //data is empty
-                    if (this.data.series.length < 1 || (this.type !== 'Pie' && this.data.labels.length < 1)) {
-                        this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions) //clear the potential old chart
-                        this.setNoData()
-                    //data is defined
-                    } else {
-                        this.noData = '' //remove class ct-nodata
-                        this.message = '' //remove message no data
-                        if (this.error.onError) this.error = { onError: false, message: '' } //clear error
-                        this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions)
-                        if (this.eventHandlers) {
-                            for (let item of this.eventHandlers) {
-                                this.chart.on(item.event, item.fn)
-                            }
-                        }
-                    }
-                } else {
-                    this.setNoData()
-                }
+                if (this.haveNoData()) return this.setNoData()
+                this.clear()
+                this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions)
+                this.setEventHandlers()
+            },
+            haveNoData() {
+                return !this.data
+                || this.data.series.length < 1
+                || (
+                        this.type !== 'Pie'
+                        && (this.data.labels.length < 1 || this.data.series.every(serie => !serie.data.length))
+                    )
             },
             redraw() {
-                if (this.data.series.length < 1 || (this.type !== 'Pie' && this.data.labels.length < 1))
-                    this.setNoData()
+                if (this.error.onError) return this.draw()
+                if (this.haveNoData()) return this.setNoData()
+                this.clear()
                 this.chart.update(this.data, this.options)
+            },
+            resetEventHandlers(eventHandlers, oldEventHanlers) {
+                for (let item of oldEventHanlers)
+                    this.chart.off(item.event, item.fn)
+                for (let item of eventHandlers)
+                    this.chart.on(item.event, item.fn)
+            },
+            setEventHandlers() {
+                if (this.eventHandlers)
+                    for (let item of this.eventHandlers)
+                        this.chart.on(item.event, item.fn)
             },
             setNoData() {
                 this.error = { onError: true, message: options.messageNoData }
@@ -61,11 +70,9 @@ exports.install = function (Vue, options={}) {
         watch: {
             'ratio': 'redraw',
             'options': 'redraw',
-            'data': {
-                handler: 'redraw',
-                deep: true
-            },
-            'type': 'redraw'
+            'data': { handler: 'redraw', deep: true },
+            'type': 'draw',
+            'eventHandlers': 'resetEventHandlers'
         }
     })
 }

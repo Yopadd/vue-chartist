@@ -8,20 +8,18 @@ new Vue({
     el: 'body',
     data: {
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            series: [{
+                name: 'series-1',
+                data: [0, 2, 4, 2, 0]
+            }, {
+                name: 'series-2',
+                data: [2, 3, 2.7, 1, 2.3]
+            }, {
+                name: 'series-3',
+                data: [4, 3.8, 3, 5, 4.1]
+            }]
         },
-        // series: [
-        //     {
-        //         name: 'series-1',
-        //         data: [0, 2, 4, 2, 0]
-        //     }, {
-        //         name: 'series-2',
-        //         data: [2, 3, 2.7, 1, 2.3]
-        //     }, {
-        //         name: 'series-3',
-        //         data: [4, 3.8, 3, 5, 4.1]
-        //     }
-        // ]
         type: 'Line',
         pieData: {
             series: [5, 6, 3, 0, 2, 4]
@@ -44,6 +42,7 @@ new Vue({
             donut: true,
             donutWidth: 60
         },
+        emptyData: { serires: [[], []], label: [] },
         eventHandlers: [{
             event: 'draw',
             fn(data) {
@@ -100,52 +99,107 @@ exports.install = function (Vue) {
         },
 
         methods: {
+            clear: function clear() {
+                this.noData = ''; //remove class ct-nodata
+                this.message = ''; //remove message no data
+                if (this.error.onError) this.error = { onError: false, message: '' }; //clear error
+            },
             draw: function draw() {
-                if (this.data) {
-                    //data is empty
-                    if (this.data.series.length < 1 || this.type !== 'Pie' && this.data.labels.length < 1) {
-                        this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions); //clear the potential old chart
-                        this.setNoData();
-                        //data is defined
-                    } else {
-                            this.noData = ''; //remove class ct-nodata
-                            this.message = ''; //remove message no data
-                            if (this.error.onError) this.error = { onError: false, message: '' }; //clear error
-                            this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions);
-                            if (this.eventHandlers) {
-                                var _iteratorNormalCompletion = true;
-                                var _didIteratorError = false;
-                                var _iteratorError = undefined;
-
-                                try {
-                                    for (var _iterator = this.eventHandlers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                                        var item = _step.value;
-
-                                        this.chart.on(item.event, item.fn);
-                                    }
-                                } catch (err) {
-                                    _didIteratorError = true;
-                                    _iteratorError = err;
-                                } finally {
-                                    try {
-                                        if (!_iteratorNormalCompletion && _iterator.return) {
-                                            _iterator.return();
-                                        }
-                                    } finally {
-                                        if (_didIteratorError) {
-                                            throw _iteratorError;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                } else {
-                    this.setNoData();
-                }
+                if (this.haveNoData()) return this.setNoData();
+                this.clear();
+                this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions);
+                this.setEventHandlers();
+            },
+            haveNoData: function haveNoData() {
+                return !this.data || this.data.series.length < 1 || this.type !== 'Pie' && (this.data.labels.length < 1 || this.data.series.every(function (serie) {
+                    return !serie.data.length;
+                }));
             },
             redraw: function redraw() {
-                if (this.data.series.length < 1 || this.type !== 'Pie' && this.data.labels.length < 1) this.setNoData();
+                if (this.error.onError) return this.draw();
+                if (this.haveNoData()) return this.setNoData();
+                this.clear();
                 this.chart.update(this.data, this.options);
+            },
+            resetEventHandlers: function resetEventHandlers(eventHandlers, oldEventHanlers) {
+                console.log('reset');
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = oldEventHanlers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var item = _step.value;
+
+                        this.chart.off(item.event, item.fn);
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = eventHandlers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var _item = _step2.value;
+
+                        this.chart.on(_item.event, _item.fn);
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
+                }
+            },
+            setEventHandlers: function setEventHandlers() {
+                if (this.eventHandlers) {
+                    var _iteratorNormalCompletion3 = true;
+                    var _didIteratorError3 = false;
+                    var _iteratorError3 = undefined;
+
+                    try {
+                        for (var _iterator3 = this.eventHandlers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                            var _item2 = _step3.value;
+
+                            this.chart.on(_item2.event, _item2.fn);
+                        }
+                    } catch (err) {
+                        _didIteratorError3 = true;
+                        _iteratorError3 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                _iterator3.return();
+                            }
+                        } finally {
+                            if (_didIteratorError3) {
+                                throw _iteratorError3;
+                            }
+                        }
+                    }
+                }
             },
             setNoData: function setNoData() {
                 this.error = { onError: true, message: options.messageNoData };
@@ -156,11 +210,9 @@ exports.install = function (Vue) {
         watch: {
             'ratio': 'redraw',
             'options': 'redraw',
-            'data': {
-                handler: 'redraw',
-                deep: true
-            },
-            'type': 'redraw'
+            'data': { handler: 'redraw', deep: true },
+            'type': 'draw',
+            'eventHandlers': 'resetEventHandlers'
         }
     });
 };
