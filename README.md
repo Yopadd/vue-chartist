@@ -11,26 +11,26 @@ npm install vue-chartist
 
 ## Setup
 
-This package include Chartist
+__This package include Chartist__
 ```javascript
 Vue.use(require('vue-chartist'))
 ```
 
 ## Usage
 
-In your HTML, add `<chartist>` tag. This tag take following attributes :
+In your HTML, add `<chartist>` tag. This tag take the following attributes :
 
-- **ratio** - `String`
+- __ratio__ - `String`
 class ratio of Chartist, see values on [Chartist web site](https://gionkunz.github.io/chartist-js/getting-started.html#as-simple-as-it-can-get)
 
-- **type** - `String` (required)
-the chart type, possible values :
+- __type__ - `String` (required)
+chart type, possible values :
     - `Line`
     - `Bar`
     - `Pie`
 
-- **data** -  `Object`
-the data object like this
+- __data__ -  `Object`
+data object like this
 ```javascript
 const data = {
     labels: ["A", "B", "C"],
@@ -38,10 +38,10 @@ const data = {
 }
 ```
 
-- **options** - `Object`
-the options object, see defaultOptions on [API Documentation](https://gionkunz.github.io/chartist-js/api-documentation.html)
+- __options__ - `Object`
+options object, see defaultOptions on [API Documentation](https://gionkunz.github.io/chartist-js/api-documentation.html)
 
-- **event-handlers** - `Array`
+- __event-handlers__ - `Array`
 a special array to use `chart.on(event, function)`
 ```javascript
 const eventHandlers = [{
@@ -54,8 +54,8 @@ const eventHandlers = [{
 }]
 ```
 
-- **responsive-options** - `Array`
-the object for responsive options
+- __responsive-options__ - `Array`
+object for responsive options
 
 ## Example
 
@@ -87,10 +87,13 @@ new Vue({
 
 ## Customize chart with no data
 
-If chart datas are empty or not definite the plugin add `ct-nodata` class and witre a message on the element.
-That way, you can customize your element with CSS when you have no data to display. To choose your message use the options plugin :
+If chart data are empty or not definied the plugin add `ct-nodata` (or a custom class, see options plugin) class and write a message on the element.
+That way, you can customize your element with CSS when you have no data to display. To choose your message use the options plugin.
+
+## Options Plugin
 ```javascript
 Vue.use(require('vue-chartist'), {
-    messageNoData: "You have not enough data"
+    messageNoData: "You have not enough data",
+    classNoData: "empty"
 })
 ```
