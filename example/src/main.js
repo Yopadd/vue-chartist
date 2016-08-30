@@ -1,7 +1,7 @@
 const Vue = require('vue')
 const Chartist = require('chartist')
 
-Vue.use(require('../../index.js'), { messageNoData: "You have not enough data" })
+Vue.use(require('../../index.js'), { messageNoData: 'You have not enough data', classNoData: 'empty' })
 
 new Vue({
     el: 'body',
@@ -43,7 +43,7 @@ new Vue({
             donut: true,
             donutWidth: 60
         },
-        emptyData: {serires: [[], []], label: []},
+        emptyData: { serires: [[], []], label: [] },
         eventHandlers: [{
             event: 'draw',
             fn(data) {

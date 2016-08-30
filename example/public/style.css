@@ -17,7 +17,7 @@ div.customize {
     width: 400px;
 }
 
-.ct-nodata {
+.empty {
     border-radius: 10px;
     text-align: center;
     text-shadow: 2px 2px black;
