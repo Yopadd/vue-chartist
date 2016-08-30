@@ -43,6 +43,7 @@ new Vue({
             donut: true,
             donutWidth: 60
         },
+        emptyData: {serires: [[], []], label: []},
         eventHandlers: [{
             event: 'draw',
             fn(data) {
