@@ -1,5 +1,5 @@
 exports.install = function (Vue, options={}) {
-    const defaultOptions = { messageNoData: '' }
+    const defaultOptions = { messageNoData: '', classNoData: 'ct-nodata' }
     options = Object.assign({}, defaultOptions, options)
 
     Vue.component('chartist', {
@@ -21,7 +21,8 @@ exports.install = function (Vue, options={}) {
                 chart: null,
                 error: { onError: false, message: '' },
                 noData: '',
-                message: ''
+                message: '',
+                classNoData: options.classNoData
             }
         },
         methods: {
@@ -63,7 +64,7 @@ exports.install = function (Vue, options={}) {
             },
             setNoData() {
                 this.error = { onError: true, message: options.messageNoData }
-                this.noData = 'ct-nodata'
+                this.noData = this.classNoData
                 this.message = this.error.message
             }
         },
