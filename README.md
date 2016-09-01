@@ -1,7 +1,7 @@
 vue-chartist
 ==============
 
-Plugin [Vuejs](http://vuejs.org/) for [Chartist.js](https://gionkunz.github.io)
+Plugin [Vuejs](http://vuejs.org/) for [Chartist.js](https://gionkunz.github.io/chartist-js)
 
 ## Install
 
