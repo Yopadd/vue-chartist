@@ -75,8 +75,12 @@ new Vue({
     el:'#app',
     data: {
         chartData: {
-            labels: ["A", "B", "C"],
-            series:[[1, 3, 2], [4, 6, 5]]
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            series:[
+                { data: [0, 2, 4, 2, 0] },
+                { data: [2, 3, 2.7, 1, 2.3] },
+                { data: [4, 3.8, 3, 5, 4.1] }
+            ]
         }
     },
     chartOptions: {
