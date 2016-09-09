@@ -42,7 +42,10 @@ exports.install = function (Vue, options={}) {
                 || this.data.series.length < 1
                 || (
                         this.type !== 'Pie'
-                        && (this.data.labels.length < 1 || this.data.series.every(serie => !serie.data.length))
+                        && (this.data.labels.length < 1 || this.data.series.every(serie => {
+                            if (Array.isArray(serie)) return !serie.length
+                            return !serie.data.length
+                        }))
                     )
             },
             redraw() {
