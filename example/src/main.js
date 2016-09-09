@@ -43,7 +43,10 @@ new Vue({
             donut: true,
             donutWidth: 60
         },
-        emptyData: { serires: [[], []], label: [] },
+        emptyData: {
+           series: [[], []],
+           labels: ['a','b'],
+        },
         eventHandlers: [{
             event: 'draw',
             fn(data) {
