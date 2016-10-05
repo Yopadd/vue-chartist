@@ -3,8 +3,8 @@ exports.install = function (Vue, options={}) {
     options = Object.assign({}, defaultOptions, options)
 
     Vue.component('chartist', {
-        template:'<div v-el:chart :class="[ratio, noData]" v-text="message"></div>',
-        ready() {
+        template: '<div v-ref="chart" :class="[ratio, noData]" v-text="message"></div>',
+        mounted() {
             this.draw()
         },
         props: {
@@ -34,7 +34,7 @@ exports.install = function (Vue, options={}) {
             draw() {
                 if (this.haveNoData()) return this.setNoData()
                 this.clear()
-                this.chart = new this.Chartist[this.type](this.$els.chart, this.data, this.options, this.responsiveOptions)
+                this.chart = new this.Chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
                 this.setEventHandlers()
             },
             haveNoData() {

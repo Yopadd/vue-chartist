@@ -8,6 +8,9 @@
     "build": "babel --presets es2015 ./src/index.js -o index.js",
     "prepublish": "npm run build"
   },
+  "browser": {
+      "vue": "./node_modules/vue/dist/vue.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Yopadd/vue-chartist.git"
@@ -29,12 +32,13 @@
   },
   "homepage": "https://github.com/Yopadd/vue-chartist#readme",
   "devDependencies": {
-    "babel-cli": "^6.14.0",
-    "babel-preset-es2015": "^6.14.0",
+    "aliasify": "^2.0.0",
+    "babel-cli": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "http-server": "^0.9.0",
-    "vue": "^1.0.26"
+    "vue": "^2.0.1"
   },
   "dependencies": {
     "chartist": "^0.9.8"

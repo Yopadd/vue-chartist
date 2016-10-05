@@ -1,12 +1,12 @@
 <!doctype html>
 <html>
     <head>
-        <title>Chartist-vuejs example</title>
+        <title>vue-chartist example</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/0.9.7/chartist.min.css">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Plugin chartist-vuejs examples</h1>
+        <h1>Plugin vue-chartist examples</h1>
         <h2>Charts reloaded thanks Vue.js</h2>
         <section>
 
@@ -17,11 +17,11 @@
                     <option value="Bar" >Bar</option>
                 </select>
                 <label>Labels : </label>
-                <input type="text" v-model="data.labels | json" lazy>
+                <input type="text" v-model="data.labels" lazy>
                 <label>Series : </label>
-                <input type="text" v-for="serie in data.series" v-model="serie.data | json" lazy>
+                <input type="text" v-for="serie in data.series" v-model="serie.data" lazy>
                 <label>Options (e.g Chartist doc) : </label>
-                <textarea rows="15" v-model="options | json" lazy></textarea>
+                <textarea rows="15" v-model="options" lazy></textarea>
             </div>
 
             <chartist
@@ -38,9 +38,9 @@
 
             <div class="customize">
                 <label>Serie : </label>
-                <input type="text" v-model="pieData.series | json" lazy>
+                <input type="text" v-model="pieData.series" lazy>
                 <label>Options (e.g Chartist doc) : </label>
-                <textarea rows="15" v-model="pieOptions | json" lazy></textarea>
+                <textarea rows="15" v-model="pieOptions" lazy></textarea>
             </div>
 
             <chartist
