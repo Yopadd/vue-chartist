@@ -1,25 +1,23 @@
-const Vue = require('../../node_modules/vue/dist/vue.js')
+const Vue = require('vue')
 
 Vue.use(require('../../index.js'), { messageNoData: 'You have not enough data', classNoData: 'empty' })
 
 new Vue({
-    el: 'body',
+    el: '#app',
     data() {
         return {
             data: {
                 labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                series: [
-                    {
-                        name: 'series-1',
-                        data: [0, 2, 4, 2, 0]
-                    }, {
-                        name: 'series-2',
-                        data: [2, 3, 2.7, 1, 2.3]
-                    }, {
-                        name: 'series-3',
-                        data: [4, 3.8, 3, 5, 4.1]
-                    }
-                ]
+                series: [{
+                    name: 'series-1',
+                    data: [0, 2, 4, 2, 0]
+                }, {
+                    name: 'series-2',
+                    data: [2, 3, 2.7, 1, 2.3]
+                }, {
+                    name: 'series-3',
+                    data: [4, 3.8, 3, 5, 4.1]
+                }]
             },
             type: 'Line',
             pieData: {
@@ -57,7 +55,7 @@ new Vue({
                                 dur: 2000,
                                 from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
                                 to: data.path.clone().stringify(),
-                                easing: Chartist.Svg.Easing.easeOutQuint
+                                easing: Vue.chartist.Svg.Easing.easeOutQuint
                             }
                         })
                     }
