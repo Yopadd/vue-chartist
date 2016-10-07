@@ -2,8 +2,11 @@ exports.install = function (Vue, options={}) {
     const defaultOptions = { messageNoData: '', classNoData: 'ct-nodata' }
     options = Object.assign({}, defaultOptions, options)
 
+    Vue.chartist = require('chartist')
+    Vue.prototype.$chartist = require('chartist')
+
     Vue.component('chartist', {
-        template: '<div v-ref="chart" :class="[ratio, noData]" v-text="message"></div>',
+        template: '<div ref="chart" :class="[ratio, noData]" v-text="message"></div>',
         mounted() {
             this.draw()
         },
@@ -17,7 +20,7 @@ exports.install = function (Vue, options={}) {
         },
         data() {
             return {
-                Chartist: require('chartist'),
+                Chartist: this.$chartist,
                 chart: null,
                 error: { onError: false, message: '' },
                 noData: '',
