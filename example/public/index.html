@@ -1,65 +1,34 @@
 <!doctype html>
 <html>
     <head>
-        <title>vue-chartist example</title>
+        <title>Chartist-vuejs example</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/0.9.7/chartist.min.css">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div id="app">
-            <h1>Plugin vue-chartist examples</h1>
+            <h1>Plugin chartist-vuejs examples</h1>
             <h2>Charts reloaded thanks Vue.js</h2>
             <section>
 
                 <div class="customize">
                     <label>Type : </label>
-                    <select v-model="type">
+                    <Select v-model="type">
                         <option>Line</option>
                         <option>Bar</option>
                     </select>
                     <label>Labels : </label>
                     <input type="text" v-model.lazy="data.labels">
                     <label>Series : </label>
-                    <input type="text" v-for="serie in data.series" v-model.lazy="serie.data">
-                    <label>Options (e.g Chartist doc) : </label>
-                    <textarea rows="15" v-model.lazy="options"></textarea>
+                    <input type="text" v-model.lazy="data.series">
                 </div>
 
                 <chartist
                     class="chart"
                     ratio="ct-major-second"
                     :type="type"
-                    :data="data"
-                    :options="options"
-                    :event-handlers="eventHandlers" >
-                </chartist>
-
-            </section>
-            <section>
-
-                <div class="customize">
-                    <label>Serie : </label>
-                    <input type="text" v-model="pieData.series" lazy>
-                    <label>Options (e.g Chartist doc) : </label>
-                    <textarea rows="15" v-model="pieOptions" lazy></textarea>
-                </div>
-
-                <chartist
-                    class="chart"
-                    ratio="ct-major-second"
-                    type="Pie"
-                    :data="pieData"
-                    :options="pieOptions" >
-                </chartist>
-
-            </section>
-            <h2>Customize the emptys charts with the <i>ct-nodata</i> class and plugin options</h2>
-            <section>
-
-                <chartist
-                    class="chart"
-                    ratio="ct-octave"
-                    type="Bar"
-                    :data="emptyData" >
+                    :data="chartData"
+                    :options="options" >
                 </chartist>
 
             </section>
