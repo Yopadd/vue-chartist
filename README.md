@@ -11,7 +11,7 @@ npm install vue-chartist
 
 ## Setup
 
-__This package include Chartist__
+__This package include Chartist's javascript but not the stylesheet__
 ```javascript
 Vue.use(require('vue-chartist'))
 ```
@@ -96,4 +96,15 @@ Vue.use(require('vue-chartist'), {
     messageNoData: "You have not enough data",
     classNoData: "empty"
 })
+```
+
+## Chartist instance
+There is two way to access this Chartist's instance :
+By `Vue` instance
+```javascript
+Vue.chartist
+```
+or in component
+```javascript
+this.$chartist
 ```
