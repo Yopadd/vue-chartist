@@ -20,7 +20,6 @@ exports.install = function (Vue, options={}) {
         },
         data() {
             return {
-                Chartist: this.$chartist,
                 chart: null,
                 error: { onError: false, message: '' },
                 noData: '',
@@ -37,7 +36,7 @@ exports.install = function (Vue, options={}) {
             draw() {
                 if (this.haveNoData()) return this.setNoData()
                 this.clear()
-                this.chart = new this.Chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
+                this.chart = new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
                 this.setEventHandlers()
             },
             haveNoData() {
