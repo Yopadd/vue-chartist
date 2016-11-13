@@ -14,7 +14,14 @@ new Vue({
             options: {
                 fullWidth: true,
                 lineSmooth: false
-            }
+            },
+            distributedSeriesData: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                series: [800000, 1200000, 1400000, 1300000]
+            },
+            distributedSeriesOptions: {
+                distributeSeries: true
+            },
         }
     },
     computed: {
