@@ -40,10 +40,11 @@ exports.install = function (Vue, options={}) {
                 this.setEventHandlers()
             },
             haveNoData() {
+                console.log(this.options.distributedSeries)
                 return !this.data
                 || this.data.series.length < 1
                 || (
-                        this.type !== 'Pie'
+                        (this.type !== 'Pie' && !this.options.distributeSeries)
                         && (this.data.labels.length < 1 || this.data.series.every(serie => {
                             if (Array.isArray(serie)) return !serie.length
                             return !serie.data.length
@@ -75,7 +76,7 @@ exports.install = function (Vue, options={}) {
         },
         watch: {
             'ratio': 'redraw',
-            'options': 'redraw',
+            'options': 'draw',
             'data': { handler: 'redraw', deep: true },
             'type': 'draw',
             'eventHandlers': 'resetEventHandlers'

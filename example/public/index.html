@@ -30,7 +30,24 @@
                     :data="chartData"
                     :options="options" >
                 </chartist>
-
+            </section>
+            <section>
+                <chartist
+                    class="chart"
+                    ratio="ct-major-second"
+                    type="Bar"
+                    :data="distributedSeriesData"
+                    :options="distributedSeriesOptions" >
+                </chartist>
+            </section>
+            <section>
+                <chartist
+                    class="chart"
+                    ratio="ct-major-second"
+                    type="Pie"
+                    :data="distributedSeriesData"
+                    :options="distributedSeriesOptions" >
+                </chartist>
             </section>
         </div>
         <script src="/build.js"></script>
