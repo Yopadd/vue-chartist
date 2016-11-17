@@ -40,7 +40,6 @@ exports.install = function (Vue, options={}) {
                 this.setEventHandlers()
             },
             haveNoData() {
-                console.log(this.options.distributedSeries)
                 return !this.data
                 || this.data.series.length < 1
                 || (
