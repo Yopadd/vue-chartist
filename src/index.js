@@ -6,7 +6,16 @@ exports.install = function (Vue, options={}) {
     Vue.prototype.$chartist = require('chartist')
 
     Vue.component('chartist', {
-        template: '<div ref="chart" :class="[ratio, noData]" v-text="message"></div>',
+        render(h) {
+            return h('div', {
+                ref: 'chart',
+                'class': {
+                    ratio: this.ratio,
+                    noData: this.noData,
+                },
+                'v-text': this.message
+            })
+        },
         mounted() {
             this.draw()
         },
