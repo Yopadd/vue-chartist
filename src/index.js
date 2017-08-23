@@ -59,13 +59,17 @@ exports.install = function (Vue, options={}) {
                         }))
                     )
             },
-            redraw() {
+            redraw(newValue, oldValue) {
+                if (JSON.stringify(newValue) === JSON.stringify(oldValue)) {
+                  return
+                }
                 if (this.error.onError) return this.draw()
                 if (this.haveNoData()) return this.setNoData()
                 this.clear()
                 this.chart.update(this.data, this.options)
             },
             resetEventHandlers(eventHandlers, oldEventHanlers) {
+                if (!this.chart) return
                 for (let item of oldEventHanlers)
                     this.chart.off(item.event, item.fn)
                 for (let item of eventHandlers)
@@ -84,7 +88,7 @@ exports.install = function (Vue, options={}) {
         },
         watch: {
             'ratio': 'redraw',
-            'options': 'draw',
+            'options': 'redraw',
             'data': { handler: 'redraw', deep: true },
             'type': 'draw',
             'eventHandlers': 'resetEventHandlers'
