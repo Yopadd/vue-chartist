@@ -6,7 +6,7 @@
   "scripts": {
     "example": "npm run build && browserify -t [babelify] -e ./example/src/main.js -o ./example/public/build.js && http-server -c0 ./example/public",
     "build": "babel --presets es2015 ./src/index.js -o index.js",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "browser": {
     "vue": "./node_modules/vue/dist/vue.js"
