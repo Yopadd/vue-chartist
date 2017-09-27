@@ -34,8 +34,9 @@
             <section>
                 <chartist
                     class="chart"
-                    ratio="ct-major-second"
+                    ratio="ct-square"
                     type="Bar"
+                    :event-handlers="events"
                     :data="distributedSeriesData"
                     :options="distributedSeriesOptions" >
                 </chartist>
