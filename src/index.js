@@ -66,9 +66,7 @@ exports.install = function (Vue, options = {}) {
           )
       },
       redraw (newValue, oldValue) {
-        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) {
-          return
-        } else if (this.error.onError) {
+        if (this.error.onError) {
           return this.draw()
         } else if (this.haveNoData()) {
           return this.setNoData()
