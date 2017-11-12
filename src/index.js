@@ -11,10 +11,9 @@ exports.install = function (Vue, options = {}) {
         ref: 'chart',
         'class': [
           this.ratio,
-          { noData: this.noData }
-        ],
-        'v-text': this.message
-      })
+          { [this.classNoData]: this.noData }
+        ]
+      }, this.message)
     },
     mounted () {
       this.draw()
@@ -31,30 +30,37 @@ exports.install = function (Vue, options = {}) {
       return {
         chart: null,
         error: { onError: false, message: '' },
-        noData: '',
+        noData: false,
         message: '',
         classNoData: options.classNoData
       }
     },
     methods: {
       clear () {
-        this.noData = '' // remove class ct-nodata
+        this.noData = false // remove class no data
         this.message = '' // remove message no data
-        if (this.error.onError) this.error = { onError: false, message: '' } // clear error
+        if (this.error.onError) {
+          this.error = { onError: false, message: '' }
+        } // clear error
       },
       draw () {
-        if (this.haveNoData()) return this.setNoData()
+        if (this.haveNoData()) {
+          return this.setNoData()
+        }
         this.clear()
         this.chart = new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
       },
       haveNoData () {
         return !this.data ||
+          !this.data.series ||
           this.data.series.length < 1 ||
           (
             (this.type !== 'Pie' && !this.options.distributeSeries) &&
             (this.data.labels.length < 1 || this.data.series.every(serie => {
-              if (Array.isArray(serie)) return !serie.length
+              if (Array.isArray(serie)) {
+                return !serie.length
+              }
               return !serie.data.length
             }))
           )
@@ -62,25 +68,35 @@ exports.install = function (Vue, options = {}) {
       redraw (newValue, oldValue) {
         if (JSON.stringify(newValue) === JSON.stringify(oldValue)) {
           return
+        } else if (this.error.onError) {
+          return this.draw()
+        } else if (this.haveNoData()) {
+          return this.setNoData()
         }
-        if (this.error.onError) return this.draw()
-        if (this.haveNoData()) return this.setNoData()
         this.clear()
         this.chart.update(this.data, this.options)
       },
       resetEventHandlers (eventHandlers, oldEventHanlers) {
-        if (!this.chart) return
-        for (let item of oldEventHanlers) { this.chart.off(item.event, item.fn) }
-        for (let item of eventHandlers) { this.chart.on(item.event, item.fn) }
+        if (!this.chart) {
+          return
+        }
+        for (let item of oldEventHanlers) {
+          this.chart.off(item.event, item.fn)
+        }
+        for (let item of eventHandlers) {
+          this.chart.on(item.event, item.fn)
+        }
       },
       setEventHandlers () {
         if (this.eventHandlers) {
-          for (let item of this.eventHandlers) { this.chart.on(item.event, item.fn) }
+          for (let item of this.eventHandlers) {
+            this.chart.on(item.event, item.fn)
+          }
         }
       },
       setNoData () {
         this.error = { onError: true, message: options.messageNoData }
-        this.noData = this.classNoData
+        this.noData = true
         this.message = this.error.message
       }
     },
