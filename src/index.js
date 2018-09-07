@@ -6,25 +6,45 @@ exports.install = function (Vue, options = {}) {
   Vue.prototype.$chartist = require('chartist')
 
   Vue.component('Chartist', {
-    render (h) {
-      return h('div', {
-        ref: 'chart',
-        'class': [
-          this.ratio,
-          { [this.classNoData]: this.noData }
-        ]
-      }, this.message)
-    },
-    mounted () {
-      this.draw()
-    },
     props: {
-      ratio: { type: String },
-      data: { type: Object },
-      options: { type: Object },
-      type: { type: String, required: true, validator (val) { return val === 'Pie' || val === 'Line' || val === 'Bar' } },
-      eventHandlers: { type: Array },
-      responsiveOptions: { type: Array }
+      ratio: {
+        type: String,
+        default: 'ct-square'
+      },
+      data: {
+        type: Object,
+        default () {
+          return {
+            series: [],
+            labels: []
+          }
+        }
+      },
+      options: {
+        type: Object,
+        default () {
+          return {}
+        }
+      },
+      type: {
+        type: String,
+        required: true,
+        validator (val) {
+          return val === 'Pie' || val === 'Line' || val === 'Bar'
+        }
+      },
+      eventHandlers: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      responsiveOptions: {
+        type: Array,
+        default () {
+          return []
+        }
+      }
     },
     data () {
       return {
@@ -35,13 +55,23 @@ exports.install = function (Vue, options = {}) {
         classNoData: options.classNoData
       }
     },
+    watch: {
+      ratio: 'redraw',
+      options: 'redraw',
+      data: { handler: 'redraw', deep: true },
+      type: 'draw',
+      eventHandlers: 'resetEventHandlers'
+    },
+    mounted () {
+      this.draw()
+    },
     methods: {
       clear () {
-        this.noData = false // remove class no data
-        this.message = '' // remove message no data
+        this.noData = false
+        this.message = ''
         if (this.error.onError) {
           this.error = { onError: false, message: '' }
-        } // clear error
+        }
       },
       draw () {
         if (this.haveNoData()) {
@@ -57,15 +87,15 @@ exports.install = function (Vue, options = {}) {
           this.data.series.length < 1 ||
           (
             (this.type !== 'Pie' && !this.options.distributeSeries) &&
-            (this.data.labels.length < 1 || this.data.series.every(serie => {
-              if (Array.isArray(serie)) {
-                return !serie.length
+            this.data.series.every(series => {
+              if (Array.isArray(series)) {
+                return !series.length
               }
-              return !serie.data.length
-            }))
+              return !series.data.length
+            })
           )
       },
-      redraw (newValue, oldValue) {
+      redraw () {
         if (this.error.onError) {
           return this.draw()
         } else if (this.haveNoData()) {
@@ -74,11 +104,11 @@ exports.install = function (Vue, options = {}) {
         this.clear()
         this.chart.update(this.data, this.options)
       },
-      resetEventHandlers (eventHandlers, oldEventHanlers) {
+      resetEventHandlers (eventHandlers, oldEventHandler) {
         if (!this.chart) {
           return
         }
-        for (let item of oldEventHanlers) {
+        for (let item of oldEventHandler) {
           this.chart.off(item.event, item.fn)
         }
         for (let item of eventHandlers) {
@@ -98,12 +128,14 @@ exports.install = function (Vue, options = {}) {
         this.message = this.error.message
       }
     },
-    watch: {
-      'ratio': 'redraw',
-      'options': 'redraw',
-      'data': { handler: 'redraw', deep: true },
-      'type': 'draw',
-      'eventHandlers': 'resetEventHandlers'
+    render (h) {
+      return h('div', {
+        ref: 'chart',
+        'class': [
+          this.ratio,
+          { [this.classNoData]: this.noData }
+        ]
+      }, this.message)
     }
   })
 }
