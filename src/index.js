@@ -5,7 +5,7 @@ exports.install = function (Vue, options = {}) {
   Vue.chartist = require('chartist')
   Vue.prototype.$chartist = require('chartist')
 
-  Vue.component('chartist', {
+  Vue.component('Chartist', {
     render (h) {
       return h('div', {
         ref: 'chart',
