@@ -57,7 +57,7 @@ exports.install = function (Vue, options = {}) {
     },
     watch: {
       ratio: 'redraw',
-      options: 'redraw',
+      options: { handler: 'redraw', deep: true },
       data: { handler: 'redraw', deep: true },
       type: 'draw',
       eventHandlers: 'resetEventHandlers'
