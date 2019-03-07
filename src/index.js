@@ -129,7 +129,7 @@ exports.install = function (Vue, options = {}) {
       }
     },
     render (h) {
-      const children = this.message ? this.message : (this.$slots.default || []);
+      const children = this.message || this.$slots.default || [];
 
       return h('div', {
         ref: 'chart',
