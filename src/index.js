@@ -57,7 +57,7 @@ exports.install = function (Vue, options = {}) {
     },
     watch: {
       ratio: 'redraw',
-      options: 'redraw',
+      options: { handler: 'redraw', deep: true },
       data: { handler: 'redraw', deep: true },
       type: 'draw',
       eventHandlers: 'resetEventHandlers'
@@ -129,13 +129,15 @@ exports.install = function (Vue, options = {}) {
       }
     },
     render (h) {
+      const children = this.message || this.$slots.default || [];
+
       return h('div', {
         ref: 'chart',
         'class': [
           this.ratio,
           { [this.classNoData]: this.noData }
         ]
-      }, this.message)
+      }, children)
     }
   })
 }
