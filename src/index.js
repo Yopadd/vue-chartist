@@ -1,8 +1,8 @@
-var chartist = require('chartist')
+var Chartist = require('chartist')
 
-function ChartistFn(options) {
+function chartistFn(options) {
   return {
-    name: 'Chartist',
+    name: 'chartist',
     props: {
       ratio: {
         type: String,
@@ -75,7 +75,7 @@ function ChartistFn(options) {
           return this.setNoData()
         }
         this.clear()
-        this.chart = new chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
+        this.chart = new Chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
       },
       haveNoData() {
@@ -144,7 +144,8 @@ const defaultOptions = { messageNoData: '', classNoData: 'ct-nodata' }
 exports.install = function (Vue, options = {}) {
   options = Object.assign({}, defaultOptions, options)
 
-  Vue.component('Chartist', ChartistFn(options))
+  Vue.component('chartist', chartistFn(options))
 }
 
-exports.Chartist = ChartistFn(defaultOptions)
+exports.chartist = chartistFn(defaultOptions)
+exports.Chartist = Chartist;
