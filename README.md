@@ -2,11 +2,15 @@ vue-chartist
 ==============
 
 Plugin [Vuejs](http://vuejs.org/) for [Chartist.js](https://gionkunz.github.io/chartist-js)
+Note: uses modified version of [Chartist.js](https://github.com/matteoraf/chartist-js)
+
+## Fork info
+This fork uses a modified version of chartist.js to allow responsiveProperties to be updated as well
 
 ## Install
 
 ```
-npm install vue-chartist
+npm i @matteoraf/vue-chartist --save
 ```
 
 ## Setup
@@ -64,7 +68,9 @@ object for responsive options
     ratio="ct-major-second"
     type="Line"
     :data="chartData"
-    :options="chartOptions" >
+    :options="chartOptions"
+    :responsive-options="chartResponsiveOptions"
+>
 </chartist>
 ```
 

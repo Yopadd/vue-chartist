@@ -2,8 +2,8 @@ exports.install = function (Vue, options = {}) {
   const defaultOptions = { messageNoData: '', classNoData: 'ct-nodata' }
   options = Object.assign({}, defaultOptions, options)
 
-  Vue.chartist = require('chartist')
-  Vue.prototype.$chartist = require('chartist')
+  Vue.chartist = require('@matteoraf/chartist')
+  Vue.prototype.$chartist = require('@matteoraf/chartist')
 
   Vue.component('Chartist', {
     props: {
@@ -58,6 +58,7 @@ exports.install = function (Vue, options = {}) {
     watch: {
       ratio: 'redraw',
       options: { handler: 'redraw', deep: true },
+      responsiveOptions: { handler: 'redraw', deep: true },
       data: { handler: 'redraw', deep: true },
       type: 'draw',
       eventHandlers: 'resetEventHandlers'
@@ -102,7 +103,7 @@ exports.install = function (Vue, options = {}) {
           return this.setNoData()
         }
         this.clear()
-        this.chart.update(this.data, this.options)
+        this.chart.update(this.data, this.options, this.responsiveOptions)
       },
       resetEventHandlers (eventHandlers, oldEventHandler) {
         if (!this.chart) {
