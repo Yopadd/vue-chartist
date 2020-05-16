@@ -1,6 +1,4 @@
-exports.install = function (Vue, options = {}) {
-  const defaultOptions = { messageNoData: '', classNoData: 'ct-nodata' }
-  options = Object.assign({}, defaultOptions, options)
+exports.install = function (Vue) {
 
   Vue.chartist = require('@matteoraf/chartist')
   Vue.prototype.$chartist = require('@matteoraf/chartist')
@@ -44,7 +42,16 @@ exports.install = function (Vue, options = {}) {
         default () {
           return []
         }
-      }
+      },
+      noDataOptions: {
+        type: Object,
+        default () {
+          return {
+            message: '',
+            class: 'ct-nodata'
+          }
+        }
+      },
     },
     data () {
       return {
@@ -52,7 +59,6 @@ exports.install = function (Vue, options = {}) {
         error: { onError: false, message: '' },
         noData: false,
         message: '',
-        classNoData: options.classNoData
       }
     },
     watch: {
@@ -124,7 +130,7 @@ exports.install = function (Vue, options = {}) {
         }
       },
       setNoData () {
-        this.error = { onError: true, message: options.messageNoData }
+        this.error = { onError: true, message: this.noDataOptions.message }
         this.noData = true
         this.message = this.error.message
       }
@@ -136,7 +142,7 @@ exports.install = function (Vue, options = {}) {
         ref: 'chart',
         'class': [
           this.ratio,
-          { [this.classNoData]: this.noData }
+          { [this.noDataOptions.class]: this.noData }
         ]
       }, children)
     }
