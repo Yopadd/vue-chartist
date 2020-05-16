@@ -96,9 +96,6 @@ exports.install = function (Vue, options = {}) {
           )
       },
       redraw () {
-        if (this.error.onError) {
-          return this.draw()
-        }
         this.clear()
         this.chart.update(this.data, this.options)
         if (this.haveNoData()) {
