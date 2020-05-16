@@ -1,6 +1,6 @@
 {
   "name": "@matteoraf/vue-chartist",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Plugin chartist for vuejs",
   "main": "index.js",
   "scripts": {

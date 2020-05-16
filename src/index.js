@@ -103,7 +103,7 @@ exports.install = function (Vue, options = {}) {
           return this.setNoData()
         }
         this.clear()
-        this.chart.update(this.data, this.options, this.responsiveOptions)
+        this.chart.update(this.data, this.options, false, this.responsiveOptions)
       },
       resetEventHandlers (eventHandlers, oldEventHandler) {
         if (!this.chart) {
