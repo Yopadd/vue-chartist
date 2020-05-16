@@ -95,14 +95,14 @@ exports.install = function (Vue, options = {}) {
             })
           )
       },
-      redraw: function redraw() {
+      redraw () {
         if (this.error.onError) {
-          return this.draw();
+          return this.draw()
         }
-        this.clear();
-        this.chart.update(this.data, this.options);
+        this.clear()
+        this.chart.update(this.data, this.options)
         if (this.haveNoData()) {
-          return this.setNoData();
+          this.setNoData()
         }
       },
       resetEventHandlers (eventHandlers, oldEventHandler) {
