@@ -66,10 +66,36 @@ exports.install = function (Vue) {
       responsiveOptions: { handler: 'redraw', deep: true },
       data: { handler: 'redraw', deep: true },
       type: 'draw',
-      eventHandlers: 'resetEventHandlers'
+      eventHandlers: 'resetEventHandlers',
+      haveNoData: {
+        immediate: true,
+        handler: function (val) {
+          if (val) {
+            this.setNoData()
+          } else {
+            this.clear()
+          }
+        }
+      }
     },
     mounted () {
       this.draw()
+    },
+    computed: {
+      haveNoData: function () {
+        return !this.data ||
+            !this.data.series ||
+            this.data.series.length < 1 ||
+            (
+                (this.type !== 'Pie' && !this.options.distributeSeries) &&
+                this.data.series.every(series => {
+                  if (Array.isArray(series)) {
+                    return !series.length
+                  }
+                  return !series.data.length
+                })
+            )
+      },
     },
     methods: {
       clear () {
@@ -83,20 +109,6 @@ exports.install = function (Vue) {
         }
         this.chart = new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
-      },
-      haveNoData () {
-        return !this.data ||
-          !this.data.series ||
-          this.data.series.length < 1 ||
-          (
-            (this.type !== 'Pie' && !this.options.distributeSeries) &&
-            this.data.series.every(series => {
-              if (Array.isArray(series)) {
-                return !series.length
-              }
-              return !series.data.length
-            })
-          )
       },
       redraw () {
         this.clear()
