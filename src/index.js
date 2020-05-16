@@ -103,19 +103,11 @@ exports.install = function (Vue) {
         this.message = ''
       },
       draw () {
-        this.clear()
-        if (this.haveNoData()) {
-          this.setNoData()
-        }
-        this.chart = new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
+        this.chart = this.haveNoData ? null : new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
       },
       redraw () {
-        this.clear()
-        this.chart.update(this.data, this.options, false, this.responsiveOptions)
-        if (this.haveNoData()) {
-          this.setNoData()
-        }
+        this.chart ? this.chart.update(this.data, this.options) : this.draw()
       },
       resetEventHandlers (eventHandlers, oldEventHandler) {
         if (!this.chart) {
@@ -129,7 +121,7 @@ exports.install = function (Vue) {
         }
       },
       setEventHandlers () {
-        if (this.eventHandlers) {
+        if (this.chart && this.eventHandlers) {
           for (let item of this.eventHandlers) {
             this.chart.on(item.event, item.fn)
           }
