@@ -49,7 +49,6 @@ exports.install = function (Vue, options = {}) {
     data () {
       return {
         chart: null,
-        error: { onError: false, message: '' },
         noData: false,
         message: '',
         classNoData: options.classNoData
@@ -69,9 +68,6 @@ exports.install = function (Vue, options = {}) {
       clear () {
         this.noData = false
         this.message = ''
-        if (this.error.onError) {
-          this.error = { onError: false, message: '' }
-        }
       },
       draw () {
         this.clear()
@@ -121,9 +117,8 @@ exports.install = function (Vue, options = {}) {
         }
       },
       setNoData () {
-        this.error = { onError: true, message: options.messageNoData }
         this.noData = true
-        this.message = this.error.message
+        this.message = options.messageNoData
       }
     },
     render (h) {
