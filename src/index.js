@@ -1,9 +1,7 @@
-exports.install = function (Vue, options = {}) {
-  const defaultOptions = { messageNoData: '', classNoData: 'ct-nodata' }
-  options = Object.assign({}, defaultOptions, options)
+exports.install = function (Vue) {
 
-  Vue.chartist = require('chartist')
-  Vue.prototype.$chartist = require('chartist')
+  Vue.chartist = require('@matteoraf/chartist')
+  Vue.prototype.$chartist = require('@matteoraf/chartist')
 
   Vue.component('Chartist', {
     props: {
@@ -44,19 +42,28 @@ exports.install = function (Vue, options = {}) {
         default () {
           return []
         }
-      }
+      },
+      noDataOptions: {
+        type: Object,
+        default () {
+          return {
+            message: '',
+            class: 'ct-nodata'
+          }
+        }
+      },
     },
     data () {
       return {
         chart: null,
         noData: false,
         message: '',
-        classNoData: options.classNoData
       }
     },
     watch: {
       ratio: 'redraw',
       options: { handler: 'redraw', deep: true },
+      responsiveOptions: { handler: 'redraw', deep: true },
       data: { handler: 'redraw', deep: true },
       type: 'draw',
       eventHandlers: 'resetEventHandlers'
@@ -93,7 +100,7 @@ exports.install = function (Vue, options = {}) {
       },
       redraw () {
         this.clear()
-        this.chart.update(this.data, this.options)
+        this.chart.update(this.data, this.options, false, this.responsiveOptions)
         if (this.haveNoData()) {
           this.setNoData()
         }
@@ -118,7 +125,7 @@ exports.install = function (Vue, options = {}) {
       },
       setNoData () {
         this.noData = true
-        this.message = options.messageNoData
+        this.message = this.noDataOptions.message
       }
     },
     render (h) {
@@ -128,7 +135,7 @@ exports.install = function (Vue, options = {}) {
         ref: 'chart',
         'class': [
           this.ratio,
-          { [this.classNoData]: this.noData }
+          { [this.noDataOptions.class]: this.noData }
         ]
       }, children)
     }

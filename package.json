@@ -1,6 +1,6 @@
 {
-  "name": "vue-chartist",
-  "version": "2.2.1",
+  "name": "@matteoraf/vue-chartist",
+  "version": "2.2.4",
   "description": "Plugin chartist for vuejs",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Yopadd/vue-chartist.git"
+    "url": "git+https://github.com/matteoraf/vue-chartist.git"
   },
   "keywords": [
     "plugin",
@@ -28,9 +28,9 @@
     "url": "http://spdx.org/licenses/WTFPL.html#licenseText"
   },
   "bugs": {
-    "url": "https://github.com/Yopadd/vue-chartist/issues"
+    "url": "https://github.com/matteoraf/vue-chartist/issues"
   },
-  "homepage": "https://github.com/Yopadd/vue-chartist#readme",
+  "homepage": "https://github.com/matteoraf/vue-chartist#readme",
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
@@ -40,6 +40,6 @@
     "vue": "^2.5.17"
   },
   "dependencies": {
-    "chartist": "^0.11.0"
+    "@matteoraf/chartist": "^0.11.6"
   }
 }
