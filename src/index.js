@@ -59,10 +59,33 @@ exports.install = function (Vue, options = {}) {
       options: { handler: 'redraw', deep: true },
       data: { handler: 'redraw', deep: true },
       type: 'draw',
-      eventHandlers: 'resetEventHandlers'
+      eventHandlers: 'resetEventHandlers',
+      haveNoData: function (val) {
+        if (val) {
+          this.setNoData()
+        } else {
+          this.clear()
+        }
+      }
     },
     mounted () {
       this.draw()
+    },
+    computed: {
+      haveNoData: function () {
+        return !this.data ||
+            !this.data.series ||
+            this.data.series.length < 1 ||
+            (
+                (this.type !== 'Pie' && !this.options.distributeSeries) &&
+                this.data.series.every(series => {
+                  if (Array.isArray(series)) {
+                    return !series.length
+                  }
+                  return !series.data.length
+                })
+            )
+      },
     },
     methods: {
       clear () {
@@ -70,33 +93,19 @@ exports.install = function (Vue, options = {}) {
         this.message = ''
       },
       draw () {
-        this.clear()
+        /* this.clear()
         if (this.haveNoData()) {
           this.setNoData()
-        }
+        } */
         this.chart = new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
       },
-      haveNoData () {
-        return !this.data ||
-          !this.data.series ||
-          this.data.series.length < 1 ||
-          (
-            (this.type !== 'Pie' && !this.options.distributeSeries) &&
-            this.data.series.every(series => {
-              if (Array.isArray(series)) {
-                return !series.length
-              }
-              return !series.data.length
-            })
-          )
-      },
       redraw () {
-        this.clear()
+        // this.clear()
         this.chart.update(this.data, this.options)
-        if (this.haveNoData()) {
+        /* if (this.haveNoData()) {
           this.setNoData()
-        }
+        } */
       },
       resetEventHandlers (eventHandlers, oldEventHandler) {
         if (!this.chart) {
