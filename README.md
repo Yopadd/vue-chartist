@@ -17,7 +17,7 @@ npm i @matteoraf/vue-chartist --save
 
 __This package include Chartist's javascript but not the stylesheet__
 ```javascript
-Vue.use(require('vue-chartist'))
+Vue.use(require('@matteoraf/vue-chartist'))
 ```
 
 ## Usage
