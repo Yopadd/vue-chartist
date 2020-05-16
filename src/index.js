@@ -74,10 +74,10 @@ exports.install = function (Vue, options = {}) {
         }
       },
       draw () {
-        if (this.haveNoData()) {
-          return this.setNoData()
-        }
         this.clear()
+        if (this.haveNoData()) {
+          this.setNoData()
+        }
         this.chart = new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
       },
