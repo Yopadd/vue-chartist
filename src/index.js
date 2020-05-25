@@ -1,4 +1,4 @@
-exports.install = function (Vue) {
+exports.install = function (Vue, options = {}) {
 
   Vue.chartist = require('chartist')
   Vue.prototype.$chartist = require('chartist')
@@ -43,7 +43,7 @@ exports.install = function (Vue) {
           return []
         }
       },
-      noDataOptions: {
+      noData: {
         type: Object,
         default () {
           return {
@@ -95,6 +95,12 @@ exports.install = function (Vue) {
                   return !series.data.length
                 })
             )
+      },
+      noDataOptions: function () {
+        return {
+          message: options.message || this.noData.message,
+          class: options.class || this.noData.class
+        }
       },
     },
     methods: {
