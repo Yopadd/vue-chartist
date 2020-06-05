@@ -67,9 +67,9 @@ exports.install = function (Vue, options = {}) {
       data: { handler: 'redraw', deep: true },
       type: 'draw',
       eventHandlers: 'resetEventHandlers',
-      haveNoData: {
+      hasNoData: {
         immediate: true,
-        handler: function (val) {
+        handler (val) {
           if (val) {
             this.setNoData()
           } else {
@@ -82,7 +82,7 @@ exports.install = function (Vue, options = {}) {
       this.draw()
     },
     computed: {
-      haveNoData: function () {
+      hasNoData () {
         return !this.data ||
             !this.data.series ||
             this.data.series.length < 1 ||
@@ -96,7 +96,7 @@ exports.install = function (Vue, options = {}) {
                 })
             )
       },
-      noDataOptions: function () {
+      noDataOptions () {
         return {
           message: options.message || this.noData.message,
           class: options.class || this.noData.class
@@ -109,7 +109,7 @@ exports.install = function (Vue, options = {}) {
         this.message = ''
       },
       draw () {
-        this.chart = this.haveNoData ? null : new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
+        this.chart = this.hasNoData ? null : new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
       },
       redraw () {
