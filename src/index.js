@@ -1,6 +1,4 @@
 exports.install = function (Vue, options = {}) {
-  const defaultOptions = { messageNoData: '', classNoData: 'ct-nodata' }
-  options = Object.assign({}, defaultOptions, options)
 
   Vue.chartist = require('chartist')
   Vue.prototype.$chartist = require('chartist')
@@ -44,65 +42,78 @@ exports.install = function (Vue, options = {}) {
         default () {
           return []
         }
-      }
+      },
+      noData: {
+        type: Object,
+        default () {
+          return {
+            message: '',
+            class: 'ct-nodata'
+          }
+        }
+      },
     },
     data () {
       return {
         chart: null,
-        error: { onError: false, message: '' },
         noData: false,
         message: '',
-        classNoData: options.classNoData
       }
     },
     watch: {
       ratio: 'redraw',
       options: { handler: 'redraw', deep: true },
+      responsiveOptions: { handler: 'redraw', deep: true },
       data: { handler: 'redraw', deep: true },
       type: 'draw',
-      eventHandlers: 'resetEventHandlers'
+      eventHandlers: 'resetEventHandlers',
+      haveNoData: {
+        immediate: true,
+        handler: function (val) {
+          if (val) {
+            this.setNoData()
+          } else {
+            this.clear()
+          }
+        }
+      }
     },
     mounted () {
       this.draw()
+    },
+    computed: {
+      haveNoData: function () {
+        return !this.data ||
+            !this.data.series ||
+            this.data.series.length < 1 ||
+            (
+                (this.type !== 'Pie' && !this.options.distributeSeries) &&
+                this.data.series.every(series => {
+                  if (Array.isArray(series)) {
+                    return !series.length
+                  }
+                  return !series.data.length
+                })
+            )
+      },
+      noDataOptions: function () {
+        return {
+          message: options.message || this.noData.message,
+          class: options.class || this.noData.class
+        }
+      },
     },
     methods: {
       clear () {
         this.noData = false
         this.message = ''
-        if (this.error.onError) {
-          this.error = { onError: false, message: '' }
-        }
       },
       draw () {
-        if (this.haveNoData()) {
-          return this.setNoData()
-        }
-        this.clear()
-        this.chart = new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
+        this.chart = this.haveNoData ? null : new this.$chartist[this.type](this.$refs.chart, this.data, this.options, this.responsiveOptions)
         this.setEventHandlers()
       },
-      haveNoData () {
-        return !this.data ||
-          !this.data.series ||
-          this.data.series.length < 1 ||
-          (
-            (this.type !== 'Pie' && !this.options.distributeSeries) &&
-            this.data.series.every(series => {
-              if (Array.isArray(series)) {
-                return !series.length
-              }
-              return !series.data.length
-            })
-          )
-      },
       redraw () {
-        if (this.error.onError) {
-          return this.draw()
-        } else if (this.haveNoData()) {
-          return this.setNoData()
-        }
-        this.clear()
-        this.chart.update(this.data, this.options)
+        this.chart ? this.chart.update(this.data, this.options) : this.draw()
       },
       resetEventHandlers (eventHandlers, oldEventHandler) {
         if (!this.chart) {
@@ -116,16 +127,15 @@ exports.install = function (Vue, options = {}) {
         }
       },
       setEventHandlers () {
-        if (this.eventHandlers) {
+        if (this.chart && this.eventHandlers) {
           for (let item of this.eventHandlers) {
             this.chart.on(item.event, item.fn)
           }
         }
       },
       setNoData () {
-        this.error = { onError: true, message: options.messageNoData }
         this.noData = true
-        this.message = this.error.message
+        this.message = this.noDataOptions.message
       }
     },
     render (h) {
@@ -135,7 +145,7 @@ exports.install = function (Vue, options = {}) {
         ref: 'chart',
         'class': [
           this.ratio,
-          { [this.classNoData]: this.noData }
+          { [this.noDataOptions.class]: this.noData }
         ]
       }, children)
     }
