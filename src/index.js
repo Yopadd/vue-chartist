@@ -56,7 +56,6 @@ exports.install = function (Vue, options = {}) {
     data () {
       return {
         chart: null,
-        noData: false,
         message: '',
       }
     },
@@ -98,14 +97,13 @@ exports.install = function (Vue, options = {}) {
       },
       noDataOptions () {
         return {
-          message: options.message || this.noData.message,
-          class: options.class || this.noData.class
+          message: options.messageNoData || this.noData.message,
+          class: options.classNoData || this.noData.class
         }
       },
     },
     methods: {
       clear () {
-        this.noData = false
         this.message = ''
       },
       draw () {
@@ -134,7 +132,6 @@ exports.install = function (Vue, options = {}) {
         }
       },
       setNoData () {
-        this.noData = true
         this.message = this.noDataOptions.message
       }
     },
@@ -145,7 +142,7 @@ exports.install = function (Vue, options = {}) {
         ref: 'chart',
         'class': [
           this.ratio,
-          { [this.noDataOptions.class]: this.noData }
+          { [this.noDataOptions.class]: this.hasNoData }
         ]
       }, children)
     }
