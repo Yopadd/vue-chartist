@@ -1,6 +1,6 @@
 {
   "name": "vue-chartist",
-  "version": "2.3.1",
+  "version": "3.0.0",
   "description": "Plugin chartist for vuejs",
   "main": "index.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "babelify": "^7.3.0",
     "browserify": "^16.2.3",
     "http-server": "^0.10.0",
-    "vue": "^2.5.17"
+    "vue": "^3.1.5"
   },
   "dependencies": {
     "chartist": "^0.11.0"

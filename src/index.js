@@ -1,9 +1,12 @@
-exports.install = function (Vue, options = {}) {
+import { h } from 'vue'
 
-  Vue.chartist = require('chartist')
-  Vue.prototype.$chartist = require('chartist')
+exports.install = function (app, options = {}) {
+  app.config.globalProperties.$chartist = require('chartist')
 
-  Vue.component('Chartist', {
+  app.component('Chartist', {
+    compatConfig: {
+      RENDER_FUNCTION: false,
+    },
     props: {
       ratio: {
         type: String,
@@ -135,7 +138,7 @@ exports.install = function (Vue, options = {}) {
         this.message = this.noDataOptions.message
       }
     },
-    render (h) {
+    render () {
       const children = this.message || this.$slots.default || [];
 
       return h('div', {
