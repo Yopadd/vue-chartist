@@ -40,6 +40,6 @@
     "vue": "^3.1.5"
   },
   "dependencies": {
-    "chartist": "git+https://github.com/crisp-dev/chartist-js.git#f4cdf581072633666e75c8cfaffeb4fff7de2b92"
+    "chartist": "git+https://github.com/crisp-dev/chartist-js.git#59cdecf7ad3fa12a6a18facf7ca34dc3e720bcb5"
   }
 }
