@@ -1,4 +1,5 @@
 const Vue = require("vue")
+const vueChartist = require("../../index.js")
 
 Vue.createApp({
   data() {
@@ -95,7 +96,7 @@ Vue.createApp({
     },
   },
 })
-  .use(require("../../index.js"), {
+  .use(vueChartist, {
     messageNoData: "You have not enough data",
     classNoData: "empty",
   })
