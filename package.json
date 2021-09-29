@@ -9,7 +9,7 @@
     "prepare": "npm run build"
   },
   "browser": {
-    "vue": "./node_modules/vue/dist/vue.js"
+    "vue": "./node_modules/vue/dist/vue.cjs.js"
   },
   "repository": {
     "type": "git",
